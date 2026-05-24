@@ -1,6 +1,0 @@
-flask>=3.0.0
-flask-sqlalchemy
-flask-migrate
-flask-login
-flask-wtf
-python-dotenv
