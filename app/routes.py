@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 from flask import Blueprint, render_template, redirect, url_for, flash
 from app.forms import MoodEntryForm
 from app.models import MoodEntry
