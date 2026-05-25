@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindful-Me | Günlük</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .hero-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ url_for('main.index') }}">Mindful-Me</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Form Section -->
+            <div class="col-md-5 mb-4">
+                <div class="card hero-card p-4">
+                    <h2 class="h4 text-primary mb-4">Nasıl Hissediyorsun?</h2>
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.mood.label(class="form-label text-secondary fw-bold") }}
+                            {{ form.mood(class="form-select") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.text.label(class="form-label text-secondary fw-bold") }}
+                            {{ form.text(class="form-control", rows="4", placeholder="Düşüncelerini buraya yaz...") }}
+                        </div>
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg rounded-pill shadow-sm") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Entries List Section -->
+            <div class="col-md-7">
+                <h2 class="h4 text-secondary mb-4">Geçmiş Kayıtların</h2>
+                {% if entries %}
+                    {% for entry in entries %}
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">
+                                {% if entry.mood == 'mutlu' %}😄 Mutlu
+                                {% elif entry.mood == 'sakin' %}😌 Sakin
+                                {% elif entry.mood == 'stresli' %}😰 Stresli
+                                {% elif entry.mood == 'uzgun' %}😢 Üzgün
+                                {% elif entry.mood == 'heyecanli' %}🤩 Heyecanlı
+                                {% else %}{{ entry.mood }}{% endif %}
+                            </h5>
+                            <h6 class="card-subtitle mb-2 text-muted small">{{ entry.timestamp.strftime('%d.%m.%Y %H:%M') if entry.timestamp else '' }}</h6>
+                            <p class="card-text">{{ entry.text }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-info border-0 shadow-sm">Henüz bir günlük kaydı eklemedin. Hadi ilk kaydını oluştur!</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
