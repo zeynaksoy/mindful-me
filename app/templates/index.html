@@ -121,6 +121,17 @@
                         <div class="mb-4">
                             {{ form.text(class="form-control", rows="3", placeholder="İçinden geçenleri dök... (İsteğe bağlı)", style="background: rgba(255,255,255,0.7); border:none; border-radius:15px;") }}
                         </div>
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                {{ form.sleep_hours(class="form-control", placeholder="Uyku (Saat)", style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.stress_level(class="form-control", placeholder="Stres (1-10)", style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.activities(class="form-control", placeholder="Aktivite (örn: spor)", style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
+                            </div>
+                        </div>
                         <div class="d-grid">
                             {{ form.submit(class="btn btn-glass btn-lg", value="Duygumu Kaydet 🕊️") }}
                         </div>
@@ -131,6 +142,24 @@
                 <div class="glass-card">
                     <h5 class="fw-bold mb-3">Duygu Haritası (Son 7 Gün)</h5>
                     <canvas id="moodChart" height="200"></canvas>
+                </div>
+
+                <!-- Akıllı Analiz ve Diğer Grafikler -->
+                {% if smart_insight %}
+                <div class="glass-card" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 248, 255, 0.6) 100%);">
+                    <h5 class="fw-bold mb-3" style="color: #6a11cb;">🧠 Akıllı İstatistik Sistemi</h5>
+                    <p class="mb-0 text-dark" style="font-size: 1rem; font-weight: 500;">{{ smart_insight }}</p>
+                </div>
+                {% endif %}
+
+                <div class="glass-card">
+                    <h5 class="fw-bold mb-3">Aktivite - Mutluluk Korelasyonu</h5>
+                    <canvas id="correlationChart" height="200"></canvas>
+                </div>
+                
+                <div class="glass-card">
+                    <h5 class="fw-bold mb-3">Haftalık Kayıt Yoğunluğu</h5>
+                    <canvas id="heatmapChart" height="150"></canvas>
                 </div>
             </div>
 
@@ -287,6 +316,68 @@
                 }
             }
         });
+
+        // Correlation Chart
+        const corrDataRaw = {{ correlation_chart_json | safe }};
+        if (corrDataRaw && corrDataRaw.labels && corrDataRaw.labels.length > 0) {
+            const ctxCorr = document.getElementById('correlationChart').getContext('2d');
+            new Chart(ctxCorr, {
+                type: 'bar',
+                data: {
+                    labels: corrDataRaw.labels,
+                    datasets: [{
+                        label: 'Ortalama Mutluluk (1-5)',
+                        data: corrDataRaw.data,
+                        backgroundColor: 'rgba(92, 184, 92, 0.5)',
+                        borderColor: '#5cb85c',
+                        borderWidth: 2,
+                        borderRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 5
+                        }
+                    }
+                }
+            });
+        } else {
+            document.getElementById('correlationChart').parentElement.style.display = 'none';
+        }
+
+        // Heatmap/Density Chart
+        const heatDataRaw = {{ heatmap_json | safe }};
+        if (heatDataRaw && heatDataRaw.length > 0) {
+            const ctxHeat = document.getElementById('heatmapChart').getContext('2d');
+            const heatLabels = heatDataRaw.map(d => d.x);
+            const heatVals = heatDataRaw.map(d => d.v);
+            new Chart(ctxHeat, {
+                type: 'bar',
+                data: {
+                    labels: heatLabels,
+                    datasets: [{
+                        label: 'Kayıt Sayısı',
+                        data: heatVals,
+                        backgroundColor: heatVals.map(v => `rgba(255, 117, 140, ${0.2 + (v * 0.2)})`),
+                        borderColor: '#ff758c',
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 }
+                        }
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>
