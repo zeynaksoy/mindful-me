@@ -24,25 +24,34 @@ SUGGESTIONS = {
 }
 
 def analyze_journal_entry(mood, text):
-    """
-    AI Günlük Analisti için placeholder fonksiyon.
-    İleride OpenAI API'si ile entegre edilebilir.
-    """
+    words = text.lower().replace('.', '').replace(',', '').split() if text else []
+    stop_words = ['bir', 've', 'ile', 'çok', 'için', 'daha', 'bu', 'şu', 'o', 'ama', 'fakat']
+    keywords_list = [w for w in words if w not in stop_words and len(w) > 3][:3]
+    keywords = ", ".join(keywords_list) if keywords_list else mood
+    
     if not text or len(text.strip()) < 5:
+        sentiment = "Nötr"
+        score = 5
         analysis = f"{mood.capitalize()} bir ruh hali içindesin."
         advice = "Daha fazla detay yazarsan sana özel yapay zeka tavsiyeleri verebilirim."
     else:
         if mood in ['uzgun', 'stresli']:
-            analysis = f"Yazdıklarında belirgin bir yoğunluk seziyorum. İçini dökmen çok değerli."
+            sentiment = "Negatif"
+            score = 3 if mood == 'uzgun' else 4
+            analysis = "Yazdıklarında belirgin bir yoğunluk seziyorum."
             advice = "Belki de şu an kendine biraz daha şefkat göstermelisin. 5 dakikalık bir nefes egzersizi iyi gelebilir."
         elif mood in ['mutlu', 'heyecanli']:
-            analysis = f"Harika! Bu pozitif anın tadını çıkardığın yazdıklarından da belli."
-            advice = "Bu enerjiyi çevrendekilerle paylaşabilir veya bu anın neden bu kadar güzel olduğunu günlüğüne not edebilirsin."
+            sentiment = "Pozitif"
+            score = 9 if mood == 'mutlu' else 8
+            analysis = "Harika! Bu pozitif anın tadını çıkardığın yazdıklarından belli."
+            advice = "Bu enerjiyi çevrendekilerle paylaşabilir veya bu anın neden güzel olduğunu not edebilirsin."
         else:
+            sentiment = "Nötr"
+            score = 6
             analysis = "Dengeli ve merkezinde görünüyorsun."
-            advice = "Günün geri kalanında bu dengeyi korumak için küçük yürüyüşler yapabilir veya sevdiğin bir müziği dinleyebilirsin."
+            advice = "Günün geri kalanında bu dengeyi korumak için kısa bir yürüyüş yapabilirsin."
             
-    return analysis, advice
+    return sentiment, score, keywords, analysis, advice
 
 def analyze_data(entries):
     if not entries:
@@ -128,7 +137,7 @@ def get_mood_history():
 def index():
     form = MoodEntryForm()
     if form.validate_on_submit():
-        analysis, advice = analyze_journal_entry(form.mood.data, form.text.data)
+        sentiment, score, keywords, analysis, advice = analyze_journal_entry(form.mood.data, form.text.data)
         entry = MoodEntry(
             mood=form.mood.data, 
             text=form.text.data,
@@ -136,7 +145,10 @@ def index():
             stress_level=form.stress_level.data,
             activities=form.activities.data,
             ai_analysis=analysis,
-            ai_advice=advice
+            ai_advice=advice,
+            ai_sentiment=sentiment,
+            ai_score=score,
+            ai_keywords=keywords
         )
         db.session.add(entry)
         db.session.commit()
