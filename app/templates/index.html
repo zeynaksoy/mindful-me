@@ -139,6 +139,24 @@
                 <div class="glass-card h-100">
                     <h4 class="fw-bold mb-4">Geçmişin İzleri</h4>
                     
+                    <!-- Arama ve Sıralama Çubuğu -->
+                    <form method="GET" action="{{ url_for('main.index') }}" class="mb-4">
+                        <div class="row g-2">
+                            <div class="col-md-7">
+                                <input type="text" name="search" class="form-control" placeholder="Günlüklerde ara..." value="{{ search_query }}" style="background: rgba(255,255,255,0.7); border: none; border-radius: 15px; font-size: 1rem; padding: 10px 15px;">
+                            </div>
+                            <div class="col-md-3">
+                                <select name="sort" class="form-select" style="background: rgba(255,255,255,0.7); border: none; border-radius: 15px; font-size: 1rem; padding: 10px 15px;">
+                                    <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>En Yeni</option>
+                                    <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>En Eski</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-grid">
+                                <button type="submit" class="btn btn-glass" style="border-radius: 15px;">Ara</button>
+                            </div>
+                        </div>
+                    </form>
+
                     <div style="max-height: 700px; overflow-y: auto; padding-right: 10px;">
                         {% if entries %}
                             {% for entry in entries %}
@@ -153,9 +171,28 @@
                                             {% elif entry.mood == 'heyecanli' %}🤩 Heyecanlı
                                             {% else %}{{ entry.mood }}{% endif %}
                                         </h5>
-                                        <small class="text-muted">{{ entry.timestamp.strftime('%d.%m.%Y %H:%M') if entry.timestamp else '' }}</small>
+                                        <div class="d-flex align-items-center">
+                                            <small class="text-muted me-3">{{ entry.timestamp.strftime('%d.%m.%Y %H:%M') if entry.timestamp else '' }}</small>
+                                            <form method="POST" action="{{ url_for('main.delete_entry', id=entry.id) }}" class="m-0" onsubmit="return confirm('Bu kaydı silmek istediğinden emin misin?');">
+                                                <button type="submit" class="btn btn-sm" title="Sil" style="background: transparent; border: none; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
+                                                    <span style="font-size: 1.2rem;">🗑️</span>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                     <p class="card-text text-dark" style="white-space: pre-wrap;">{{ entry.text }}</p>
+                                    
+                                    {% if entry.ai_analysis and entry.ai_advice %}
+                                    <hr class="my-3" style="border-color: rgba(0,0,0,0.1);">
+                                    <div class="ai-insight p-3 rounded" style="background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(240,248,255,0.6) 100%); border: 1px solid rgba(255,255,255,0.9); box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span class="fs-4 me-2">✨</span>
+                                            <h6 class="m-0 fw-bold" style="color: #6a11cb;">AI Günlük Analisti</h6>
+                                        </div>
+                                        <p class="mb-2 text-dark" style="font-size: 0.95rem;"><strong>Durum Analizi:</strong> {{ entry.ai_analysis }}</p>
+                                        <p class="mb-0 text-dark" style="font-size: 0.95rem;"><strong>Özel Tavsiye:</strong> <span style="color: #2575fc; font-weight: 600;">{{ entry.ai_advice }}</span></p>
+                                    </div>
+                                    {% endif %}
                                 </div>
                             </div>
                             {% endfor %}

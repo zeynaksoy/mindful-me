@@ -13,6 +13,8 @@ class MoodEntry(db.Model):
     mood = db.Column(db.String(20), nullable=False)
     text = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, index=True, default=db.func.now())
+    ai_analysis = db.Column(db.String(255), nullable=True)
+    ai_advice = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
         return f'<MoodEntry {self.mood} at {self.timestamp}>'
