@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mindful-Me | Profilim</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .btn-glass {
+            background: rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.8);
+            color: #2c3e50;
+            font-weight: bold;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        .btn-glass:hover {
+            background: rgba(255,255,255,0.9);
+            transform: translateY(-2px);
+        }
+
+        /* Avatar */
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .avatar-circle {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255,255,255,0.9);
+            box-shadow: 0 8px 25px rgba(106,17,203,0.25);
+            transition: transform 0.3s;
+        }
+        .avatar-circle:hover { transform: scale(1.04); }
+        .avatar-placeholder {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            border: 4px solid rgba(255,255,255,0.9);
+            box-shadow: 0 8px 25px rgba(106,17,203,0.25);
+            transition: transform 0.3s;
+        }
+        .avatar-placeholder:hover { transform: scale(1.04); }
+
+        /* Upload zone */
+        .upload-zone {
+            border: 2px dashed rgba(106,17,203,0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-zone:hover {
+            border-color: #6a11cb;
+            background: rgba(106,17,203,0.05);
+        }
+        .upload-zone input[type="file"] { display: none; }
+
+        /* Stat badges */
+        .stat-badge {
+            background: rgba(255,255,255,0.6);
+            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 16px;
+            padding: 1.2rem 1rem;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .stat-badge:hover { transform: translateY(-3px); }
+        .stat-badge .stat-num {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* API doc card */
+        .api-card {
+            background: rgba(30,30,60,0.85);
+            border-radius: 16px;
+            padding: 1.5rem;
+            color: #e0e0ff;
+            font-family: 'Courier New', monospace;
+        }
+        .api-card .method { color: #79ffe1; font-weight: 700; }
+        .api-card .url    { color: #f0e68c; }
+        .api-card .param  { color: #ff9fd8; }
+
+        /* Flash messages */
+        .alert-glass {
+            background: rgba(46,204,113,0.2);
+            border: 1px solid rgba(46,204,113,0.5);
+            border-radius: 14px;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes float {
+            0%,100% { transform: translateY(0); }
+            50%      { transform: translateY(-6px); }
+        }
+        .float-anim { animation: float 3s ease-in-out infinite; }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light mb-4"
+         style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-dark" href="{{ url_for('main.index') }}">🌿 Mindful-Me</a>
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <a href="{{ url_for('main.index') }}" class="btn btn-glass btn-sm">← Ana Sayfa</a>
+                <a href="{{ url_for('main.api_entries') }}" target="_blank"
+                   class="btn btn-sm"
+                   style="background: rgba(106,17,203,0.15); border: 1px solid rgba(106,17,203,0.3); border-radius:50px; color:#6a11cb; font-weight:600;">
+                    🔌 API
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 860px;">
+
+        <!-- Flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-glass d-flex align-items-center mb-4" role="alert">
+                <span class="me-2">🎉</span>{{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Profil Kartı -->
+        <div class="glass-card">
+            <div class="row align-items-center g-4">
+                <!-- Avatar -->
+                <div class="col-md-4 text-center">
+                    <div class="avatar-wrapper float-anim d-inline-block">
+                        {% if avatar_url %}
+                        <img src="{{ avatar_url }}" class="avatar-circle" alt="Avatar">
+                        {% else %}
+                        <div class="avatar-placeholder mx-auto">🧘</div>
+                        {% endif %}
+                    </div>
+                    <h5 class="fw-bold mt-3 mb-1">{{ user.username }}</h5>
+                    <small class="text-muted">{{ user.email }}</small>
+                </div>
+
+                <!-- Upload Form -->
+                <div class="col-md-8">
+                    <h4 class="fw-bold mb-4" style="color:#6a11cb;">✨ Profil Ayarları</h4>
+
+                    <form method="POST" enctype="multipart/form-data" id="profileForm">
+                        {{ form.hidden_tag() }}
+
+                        <label for="avatarInput" class="upload-zone w-100 mb-3">
+                            <div class="fs-2 mb-2">🖼️</div>
+                            <p class="fw-semibold mb-1">Avatar yüklemek için tıkla veya sürükle</p>
+                            <small class="text-muted">PNG, JPG, GIF, WEBP · Maks. 5 MB</small>
+                            {{ form.avatar(id="avatarInput", onchange="previewAvatar(event)") }}
+                        </label>
+
+                        <!-- Önizleme -->
+                        <div id="previewBox" class="text-center mb-3" style="display:none;">
+                            <img id="previewImg" src="" alt="Önizleme"
+                                 style="width:100px;height:100px;border-radius:50%;object-fit:cover;
+                                        border:3px solid #6a11cb;box-shadow:0 4px 15px rgba(106,17,203,0.3);">
+                            <p class="text-muted mt-2" style="font-size:0.85rem;">Önizleme – Kaydetmek için butona bas</p>
+                        </div>
+
+                        {% for error in form.avatar.errors %}
+                        <div class="text-danger small mb-2">⚠️ {{ error }}</div>
+                        {% endfor %}
+
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-glass btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- İstatistikler -->
+        <div class="glass-card">
+            <h5 class="fw-bold mb-4">📊 Kişisel İstatistiklerim</h5>
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <div class="stat-badge">
+                        <div class="stat-num">{{ total_entries }}</div>
+                        <small class="text-muted">Toplam Kayıt</small>
+                    </div>
+                </div>
+                {% set mood_emojis = {'mutlu':'😄','sakin':'😌','stresli':'😰','uzgun':'😢','heyecanli':'🤩'} %}
+                {% set mood_labels = {'mutlu':'Mutlu','sakin':'Sakin','stresli':'Stresli','uzgun':'Üzgün','heyecanli':'Heyecanlı'} %}
+                {% for mood_key, count in mood_counts.items() %}
+                <div class="col-6 col-md-3">
+                    <div class="stat-badge">
+                        <div class="stat-num">{{ count }}</div>
+                        <small class="text-muted">{{ mood_emojis.get(mood_key,'❓') }} {{ mood_labels.get(mood_key, mood_key) }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if best_mood %}
+            <div class="mt-4 p-3 rounded-3 text-center"
+                 style="background:linear-gradient(135deg,rgba(106,17,203,0.1),rgba(37,117,252,0.1));
+                         border:1px solid rgba(106,17,203,0.2);">
+                <p class="mb-0 fw-semibold">
+                    En sık hissettiğin duygu:
+                    <span style="color:#6a11cb;">{{ mood_emojis.get(best_mood,'') }} {{ mood_labels.get(best_mood, best_mood) }}</span>
+                </p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- API Dokümantasyonu -->
+        <div class="glass-card">
+            <h5 class="fw-bold mb-4">🔌 API Referansı <code style="font-size:0.8rem;">/api/v1</code></h5>
+            <div class="api-card mb-3">
+                <p class="mb-1">
+                    <span class="method">GET</span>
+                    <span class="url"> /api/v1/entries</span>
+                </p>
+                <p class="mb-0" style="font-size:0.85rem;">
+                    Tüm kayıtları JSON olarak döndürür.<br>
+                    Opsiyonel parametreler:
+                    <span class="param">?limit=10</span> &nbsp;
+                    <span class="param">?mood=mutlu</span>
+                </p>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{{ url_for('main.api_entries') }}" target="_blank"
+                   class="btn btn-glass btn-sm">Tüm Kayıtlar →</a>
+                <a href="{{ url_for('main.api_entries') }}?limit=5" target="_blank"
+                   class="btn btn-glass btn-sm">Son 5 Kayıt →</a>
+                <a href="{{ url_for('main.api_entries') }}?mood=mutlu" target="_blank"
+                   class="btn btn-glass btn-sm">Mutlu Kayıtlar →</a>
+            </div>
+        </div>
+
+    </div><!-- /container -->
+
+    <script>
+        function previewAvatar(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('previewImg').src = e.target.result;
+                document.getElementById('previewBox').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+</body>
+</html>

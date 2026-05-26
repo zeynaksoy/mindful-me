@@ -1,8 +1,10 @@
 import json
+import os
 from datetime import datetime, timedelta
-from flask import Blueprint, render_template, redirect, url_for, flash, request
-from app.forms import MoodEntryForm
-from app.models import MoodEntry
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from werkzeug.utils import secure_filename
+from app.forms import MoodEntryForm, ProfileForm
+from app.models import MoodEntry, User
 from app import db
 
 main = Blueprint('main', __name__)
@@ -249,3 +251,63 @@ def delete_entry(id):
     db.session.delete(entry)
     db.session.commit()
     return redirect(url_for('main.index'))
+
+# ── API v1 ────────────────────────────────────────────────
+@main.route('/api/v1/entries', methods=['GET'])
+def api_entries():
+    """JSON API: tüm günlük kayıtlarını döndürür."""
+    limit  = request.args.get('limit',  type=int)
+    mood   = request.args.get('mood',   type=str)
+    query  = MoodEntry.query.order_by(MoodEntry.timestamp.desc())
+    if mood:
+        query = query.filter(MoodEntry.mood == mood)
+    if limit:
+        query = query.limit(limit)
+    entries = query.all()
+    return jsonify({
+        'status':  'ok',
+        'count':   len(entries),
+        'entries': [e.to_dict() for e in entries]
+    })
+
+# ── Profil ────────────────────────────────────────────────
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+AVATARS_DIR = os.path.join(os.path.dirname(__file__), 'static', 'avatars')
+
+@main.route('/profile', methods=['GET', 'POST'])
+def profile():
+    # Varsayılan kullanıcıyı al ya da oluştur
+    user = User.query.first()
+    if not user:
+        user = User(username='Mindful Kullanıcı', email='user@mindful.me', avatar_file='default.png')
+        db.session.add(user)
+        db.session.commit()
+
+    form = ProfileForm()
+    if form.validate_on_submit():
+        file = form.avatar.data
+        if file:
+            filename  = secure_filename(file.filename)
+            # Benzersiz dosya adı: user_id + orijinal uzantı
+            ext       = filename.rsplit('.', 1)[1].lower()
+            save_name = f"avatar_{user.id}.{ext}"
+            os.makedirs(AVATARS_DIR, exist_ok=True)
+            file.save(os.path.join(AVATARS_DIR, save_name))
+            user.avatar_file = save_name
+            db.session.commit()
+            flash('Avatar başarıyla güncellendi! 🎉', 'success')
+        return redirect(url_for('main.profile'))
+
+    # İstatistikler
+    total_entries  = MoodEntry.query.count()
+    mood_counts    = {}
+    for e in MoodEntry.query.all():
+        mood_counts[e.mood] = mood_counts.get(e.mood, 0) + 1
+    best_mood      = max(mood_counts, key=mood_counts.get) if mood_counts else None
+    avatar_url     = url_for('static', filename=f'avatars/{user.avatar_file}') \
+                     if user.avatar_file and user.avatar_file != 'default.png' \
+                     else None
+
+    return render_template('profile.html', user=user, form=form,
+                           total_entries=total_entries, mood_counts=mood_counts,
+                           best_mood=best_mood, avatar_url=avatar_url)
