@@ -70,6 +70,41 @@
             background: rgba(255, 236, 179, 0.6);
             border-left: 5px solid #ffca28;
         }
+        
+        /* Mood Takvimi CSS Grid */
+        .mood-calendar {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 8px;
+            padding: 5px;
+        }
+        .mood-box {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255,255,255,0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .mood-box:hover {
+            transform: scale(1.15);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            z-index: 10;
+            position: relative;
+        }
+        .mood-mutlu, .mood-heyecanli {
+            background: rgba(46, 204, 113, 0.8) !important;
+            border-color: #2ecc71 !important;
+        }
+        .mood-sakin {
+            background: rgba(241, 196, 15, 0.8) !important;
+            border-color: #f1c40f !important;
+        }
+        .mood-uzgun, .mood-stresli {
+            background: rgba(231, 76, 60, 0.7) !important;
+            border-color: #e74c3c !important;
+        }
     </style>
 </head>
 <body>
@@ -160,6 +195,18 @@
                 <div class="glass-card">
                     <h5 class="fw-bold mb-3">Haftalık Kayıt Yoğunluğu</h5>
                     <canvas id="heatmapChart" height="150"></canvas>
+                </div>
+
+                <!-- Mood Takvimi -->
+                <div class="glass-card">
+                    <h5 class="fw-bold mb-3">Mood Takvimi (Son 30 Gün)</h5>
+                    <div class="mood-calendar">
+                        {% for day in mood_history %}
+                        <div class="mood-box {% if day.mood %}mood-{{ day.mood }}{% endif %}" 
+                             title="{{ day.date }}: {{ day.text }}">
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
 

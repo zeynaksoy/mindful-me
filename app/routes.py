@@ -96,6 +96,34 @@ def analyze_data(entries):
         
     return " ".join(insights)
 
+def get_mood_history():
+    thirty_days_ago = datetime.utcnow() - timedelta(days=29)
+    recent_entries = MoodEntry.query.filter(MoodEntry.timestamp >= thirty_days_ago).order_by(MoodEntry.timestamp.asc()).all()
+    
+    daily_data = {}
+    for e in recent_entries:
+        date_str = e.timestamp.strftime('%Y-%m-%d')
+        daily_data[date_str] = {
+            'mood': e.mood,
+            'text': (e.text[:50] + '...') if len(e.text) > 50 else e.text,
+            'date': e.timestamp.strftime('%d %b')
+        }
+        
+    history = []
+    for i in range(29, -1, -1):
+        day = datetime.utcnow() - timedelta(days=i)
+        date_str = day.strftime('%Y-%m-%d')
+        if date_str in daily_data:
+            history.append(daily_data[date_str])
+        else:
+            history.append({
+                'mood': None,
+                'text': 'Kayıt yok',
+                'date': day.strftime('%d %b')
+            })
+            
+    return history
+
 @main.route('/', methods=['GET', 'POST'])
 def index():
     form = MoodEntryForm()
@@ -196,9 +224,12 @@ def index():
         
     heatmap_json = json.dumps(heatmap_data)
     
+    mood_history = get_mood_history()
+    
     return render_template('index.html', form=form, entries=entries, suggestion=current_suggestion, 
                            chart_json=json.dumps(chart_json), search_query=search_query, sort_order=sort_order,
-                           smart_insight=smart_insight, correlation_chart_json=correlation_chart_json, heatmap_json=heatmap_json)
+                           smart_insight=smart_insight, correlation_chart_json=correlation_chart_json, 
+                           heatmap_json=heatmap_json, mood_history=mood_history)
 
 @main.route('/delete/<int:id>', methods=['POST'])
 def delete_entry(id):
