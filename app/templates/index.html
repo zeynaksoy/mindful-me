@@ -191,21 +191,21 @@
                         </div>
 
                         <div class="mb-4">
-                            {{ form.text(class="form-control", rows="3", placeholder=_("İçinden geçenleri dök... (İsteğe bağlı)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px;") }}
+                            {{ form.text(class_="form-control", rows="3", placeholder=_("İçinden geçenleri dök... (İsteğe bağlı)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px;") }}
                         </div>
                         <div class="row mb-4">
                             <div class="col-md-4">
-                                {{ form.sleep_hours(class="form-control", placeholder=_("Uyku (Saat)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
+                                {{ form.sleep_hours(class_="form-control", placeholder=_("Uyku (Saat)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
                             </div>
                             <div class="col-md-4">
-                                {{ form.stress_level(class="form-control", placeholder=_("Stres (1-10)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
+                                {{ form.stress_level(class_="form-control", placeholder=_("Stres (1-10)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
                             </div>
                             <div class="col-md-4">
-                                {{ form.activities(class="form-control", placeholder=_("Aktivite (örn: spor)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
+                                {{ form.activities(class_="form-control", placeholder=_("Aktivite (örn: spor)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
                             </div>
                         </div>
                         <div class="d-grid">
-                            {{ form.submit(class="btn btn-glass btn-lg", value=_("Duygumu Kaydet 🕊️")) }}
+                            {{ form.submit(class_="btn btn-glass btn-lg", value=_("Duygumu Kaydet 🕊️")) }}
                         </div>
                     </form>
                 </div>
@@ -297,7 +297,7 @@
                                             entry.timestamp else '' }}</small>
                                         <form method="POST" action="{{ url_for('main.delete_entry', id=entry.id) }}"
                                             class="m-0"
-                                            onsubmit="return confirm('{{ _(\'Bu kaydı silmek istediğinden emin misin?\') }}');">
+                                            onsubmit="return confirm('{{ _('Bu kaydı silmek istediğinden emin misin?') }}');">
                                             <button type="submit" class="btn btn-sm" title="Sil"
                                                 style="background: transparent; border: none; transition: transform 0.2s;"
                                                 onmouseover="this.style.transform='scale(1.2)'"
