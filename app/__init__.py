@@ -1,9 +1,16 @@
-from flask import Flask
+from flask import Flask, request, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_babel import Babel
 
 db = SQLAlchemy()
 migrate = Migrate()
+babel = Babel()
+
+def get_locale():
+    if 'language' in session:
+        return session['language']
+    return request.accept_languages.best_match(['tr', 'en'])
 
 def create_app():
     """Create and configure the Flask application."""
@@ -12,6 +19,7 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db)
+    babel.init_app(app, locale_selector=get_locale)
 
     with app.app_context():
         from app import models

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mindful-Me | Zihinsel Farkındalık</title>
+    <title>Mindful-Me | {{ _('Zihinsel Farkındalık') }}</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Chart.js -->
@@ -16,7 +17,7 @@
             min-height: 100vh;
             color: #2c3e50;
         }
-        
+
         /* Strategy 3: Glassmorphism Kartlar */
         .glass-card {
             background: rgba(255, 255, 255, 0.4);
@@ -28,49 +29,53 @@
             padding: 2rem;
             margin-bottom: 2rem;
         }
-        
+
         /* Hızlı Emoji Seçimi */
         .emoji-selector {
             display: flex;
             justify-content: space-between;
-            background: rgba(255,255,255,0.5);
+            background: rgba(255, 255, 255, 0.5);
             border-radius: 50px;
             padding: 10px 20px;
             margin-bottom: 20px;
         }
+
         .emoji-btn {
             font-size: 2.5rem;
             cursor: pointer;
             transition: transform 0.2s, filter 0.2s;
             filter: grayscale(100%) opacity(0.5);
         }
+
         .emoji-btn:hover {
             transform: scale(1.2);
             filter: grayscale(0%) opacity(1);
         }
+
         .emoji-btn.active {
             transform: scale(1.3);
             filter: grayscale(0%) opacity(1);
         }
 
         .btn-glass {
-            background: rgba(255,255,255,0.6);
-            border: 1px solid rgba(255,255,255,0.8);
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             color: #2c3e50;
             font-weight: bold;
             border-radius: 50px;
             transition: all 0.3s;
         }
+
         .btn-glass:hover {
-            background: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.9);
             transform: translateY(-2px);
         }
-        
+
         .suggestion-box {
             background: rgba(255, 236, 179, 0.6);
             border-left: 5px solid #ffca28;
         }
-        
+
         /* Mood Takvimi CSS Grid */
         .mood-calendar {
             display: grid;
@@ -78,60 +83,76 @@
             gap: 8px;
             padding: 5px;
         }
+
         .mood-box {
             width: 100%;
             aspect-ratio: 1;
             border-radius: 6px;
             background: rgba(255, 255, 255, 0.3);
-            border: 1px solid rgba(255,255,255,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             transition: transform 0.2s, box-shadow 0.2s;
             cursor: pointer;
         }
+
         .mood-box:hover {
             transform: scale(1.15);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             z-index: 10;
             position: relative;
         }
-        .mood-mutlu, .mood-heyecanli {
+
+        .mood-mutlu,
+        .mood-heyecanli {
             background: rgba(46, 204, 113, 0.8) !important;
             border-color: #2ecc71 !important;
         }
+
         .mood-sakin {
             background: rgba(241, 196, 15, 0.8) !important;
             border-color: #f1c40f !important;
         }
-        .mood-uzgun, .mood-stresli {
+
+        .mood-uzgun,
+        .mood-stresli {
             background: rgba(231, 76, 60, 0.7) !important;
             border-color: #e74c3c !important;
         }
-        
+
         @keyframes shine {
-            0% { background-position: 200% center; }
-            100% { background-position: -200% center; }
+            0% {
+                background-position: 200% center;
+            }
+
+            100% {
+                background-position: -200% center;
+            }
         }
     </style>
 </head>
+
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light mb-4" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
+    <nav class="navbar navbar-expand-lg navbar-light mb-4"
+        style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
         <div class="container">
             <a class="navbar-brand fw-bold text-dark" href="{{ url_for('main.index') }}">🌿 Mindful-Me</a>
             <div class="ms-auto d-flex align-items-center gap-2">
-                <a href="{{ url_for('main.api_entries') }}" target="_blank"
-                   class="btn btn-sm"
-                   style="background:rgba(106,17,203,0.12);border:1px solid rgba(106,17,203,0.3);border-radius:50px;color:#6a11cb;font-weight:600;">
-                    🔌 API
+                <div class="btn-group">
+                    <a href="{{ url_for('main.set_language', language='tr') }}" class="btn btn-sm btn-glass">TR</a>
+                    <a href="{{ url_for('main.set_language', language='en') }}" class="btn btn-sm btn-glass">EN</a>
+                </div>
+                <a href="{{ url_for('main.api_entries') }}" target="_blank" class="btn btn-sm"
+                    style="background:rgba(106,17,203,0.12);border:1px solid rgba(106,17,203,0.3);border-radius:50px;color:#6a11cb;font-weight:600;">
+                    🔌 {{ _('API') }}
                 </a>
-                <a href="{{ url_for('main.profile') }}"
-                   class="btn btn-sm btn-glass" style="border-radius:50px;">
-                    👤 Profilim
+                <a href="{{ url_for('main.profile') }}" class="btn btn-sm btn-glass" style="border-radius:50px;">
+                    👤 {{ _('Profilim') }}
                 </a>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        
+
         {% if suggestion %}
         <!-- Strategy 2: Görev Motoru -->
         <div class="row mb-4">
@@ -139,7 +160,7 @@
                 <div class="glass-card suggestion-box p-3 d-flex align-items-center" style="margin-bottom: 0;">
                     <h3 class="m-0 me-3">💡</h3>
                     <div>
-                        <h5 class="fw-bold mb-1">Küçük Bir Mola</h5>
+                        <h5 class="fw-bold mb-1">{{ _('Küçük Bir Mola') }}</h5>
                         <p class="m-0">{{ suggestion }}</p>
                     </div>
                 </div>
@@ -151,10 +172,10 @@
             <!-- Sol Sütun: Form ve Grafik -->
             <div class="col-lg-5">
                 <div class="glass-card">
-                    <h4 class="fw-bold mb-4">Şu An Nasılsın?</h4>
+                    <h4 class="fw-bold mb-4">{{ _('Şu An Nasılsın?') }}</h4>
                     <form method="POST" action="" id="moodForm">
                         {{ form.hidden_tag() }}
-                        
+
                         <!-- Gizli orjinal select -->
                         <div class="d-none">
                             {{ form.mood(id="realMoodSelect") }}
@@ -162,64 +183,65 @@
 
                         <!-- Hızlı Emoji Seçimi -->
                         <div class="emoji-selector">
-                            <span class="emoji-btn" data-value="uzgun" title="Üzgün">😢</span>
-                            <span class="emoji-btn" data-value="stresli" title="Stresli">😰</span>
-                            <span class="emoji-btn" data-value="sakin" title="Sakin">😌</span>
-                            <span class="emoji-btn" data-value="mutlu" title="Mutlu">😄</span>
-                            <span class="emoji-btn" data-value="heyecanli" title="Heyecanlı">🤩</span>
+                            <span class="emoji-btn" data-value="uzgun" title="{{ _('Üzgün') }}">😢</span>
+                            <span class="emoji-btn" data-value="stresli" title="{{ _('Stresli') }}">😰</span>
+                            <span class="emoji-btn" data-value="sakin" title="{{ _('Sakin') }}">😌</span>
+                            <span class="emoji-btn" data-value="mutlu" title="{{ _('Mutlu') }}">😄</span>
+                            <span class="emoji-btn" data-value="heyecanli" title="{{ _('Heyecanlı') }}">🤩</span>
                         </div>
 
                         <div class="mb-4">
-                            {{ form.text(class="form-control", rows="3", placeholder="İçinden geçenleri dök... (İsteğe bağlı)", style="background: rgba(255,255,255,0.7); border:none; border-radius:15px;") }}
+                            {{ form.text(class="form-control", rows="3", placeholder=_("İçinden geçenleri dök... (İsteğe bağlı)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px;") }}
                         </div>
                         <div class="row mb-4">
                             <div class="col-md-4">
-                                {{ form.sleep_hours(class="form-control", placeholder="Uyku (Saat)", style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
+                                {{ form.sleep_hours(class="form-control", placeholder=_("Uyku (Saat)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
                             </div>
                             <div class="col-md-4">
-                                {{ form.stress_level(class="form-control", placeholder="Stres (1-10)", style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
+                                {{ form.stress_level(class="form-control", placeholder=_("Stres (1-10)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
                             </div>
                             <div class="col-md-4">
-                                {{ form.activities(class="form-control", placeholder="Aktivite (örn: spor)", style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
+                                {{ form.activities(class="form-control", placeholder=_("Aktivite (örn: spor)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
                             </div>
                         </div>
                         <div class="d-grid">
-                            {{ form.submit(class="btn btn-glass btn-lg", value="Duygumu Kaydet 🕊️") }}
+                            {{ form.submit(class="btn btn-glass btn-lg", value=_("Duygumu Kaydet 🕊️")) }}
                         </div>
                     </form>
                 </div>
 
                 <!-- Strategy 1: Duygu Haritası Grafiği -->
                 <div class="glass-card">
-                    <h5 class="fw-bold mb-3">Duygu Haritası (Son 7 Gün)</h5>
+                    <h5 class="fw-bold mb-3">{{ _('Duygu Haritası (Son 7 Gün)') }}</h5>
                     <canvas id="moodChart" height="200"></canvas>
                 </div>
 
                 <!-- Akıllı Analiz ve Diğer Grafikler -->
                 {% if smart_insight %}
-                <div class="glass-card" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 248, 255, 0.6) 100%);">
-                    <h5 class="fw-bold mb-3" style="color: #6a11cb;">🧠 Akıllı İstatistik Sistemi</h5>
+                <div class="glass-card"
+                    style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(240, 248, 255, 0.6) 100%);">
+                    <h5 class="fw-bold mb-3" style="color: #6a11cb;">🧠 {{ _('Akıllı İstatistik Sistemi') }}</h5>
                     <p class="mb-0 text-dark" style="font-size: 1rem; font-weight: 500;">{{ smart_insight }}</p>
                 </div>
                 {% endif %}
 
                 <div class="glass-card">
-                    <h5 class="fw-bold mb-3">Aktivite - Mutluluk Korelasyonu</h5>
+                    <h5 class="fw-bold mb-3">{{ _('Aktivite - Mutluluk Korelasyonu') }}</h5>
                     <canvas id="correlationChart" height="200"></canvas>
                 </div>
-                
+
                 <div class="glass-card">
-                    <h5 class="fw-bold mb-3">Haftalık Kayıt Yoğunluğu</h5>
+                    <h5 class="fw-bold mb-3">{{ _('Haftalık Kayıt Yoğunluğu') }}</h5>
                     <canvas id="heatmapChart" height="150"></canvas>
                 </div>
 
                 <!-- Mood Takvimi -->
                 <div class="glass-card">
-                    <h5 class="fw-bold mb-3">Mood Takvimi (Son 30 Gün)</h5>
+                    <h5 class="fw-bold mb-3">{{ _('Mood Takvimi (Son 30 Gün)') }}</h5>
                     <div class="mood-calendar">
                         {% for day in mood_history %}
-                        <div class="mood-box {% if day.mood %}mood-{{ day.mood }}{% endif %}" 
-                             title="{{ day.date }}: {{ day.text }}">
+                        <div class="mood-box {% if day.mood %}mood-{{ day.mood }}{% endif %}"
+                            title="{{ day.date }}: {{ day.text }}">
                         </div>
                         {% endfor %}
                     </div>
@@ -229,95 +251,123 @@
             <!-- Sağ Sütun: Kayıtlar -->
             <div class="col-lg-7">
                 <div class="glass-card h-100">
-                    <h4 class="fw-bold mb-4">Geçmişin İzleri</h4>
-                    
+                    <h4 class="fw-bold mb-4">{{ _('Geçmişin İzleri') }}</h4>
+
                     <!-- Arama ve Sıralama Çubuğu -->
                     <form method="GET" action="{{ url_for('main.index') }}" class="mb-4">
                         <div class="row g-2">
                             <div class="col-md-7">
-                                <input type="text" name="search" class="form-control" placeholder="Günlüklerde ara..." value="{{ search_query }}" style="background: rgba(255,255,255,0.7); border: none; border-radius: 15px; font-size: 1rem; padding: 10px 15px;">
+                                <input type="text" name="search" class="form-control"
+                                    placeholder="{{ _('Günlüklerde ara...') }}" value="{{ search_query }}"
+                                    style="background: rgba(255,255,255,0.7); border: none; border-radius: 15px; font-size: 1rem; padding: 10px 15px;">
                             </div>
                             <div class="col-md-3">
-                                <select name="sort" class="form-select" style="background: rgba(255,255,255,0.7); border: none; border-radius: 15px; font-size: 1rem; padding: 10px 15px;">
-                                    <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>En Yeni</option>
-                                    <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>En Eski</option>
+                                <select name="sort" class="form-select"
+                                    style="background: rgba(255,255,255,0.7); border: none; border-radius: 15px; font-size: 1rem; padding: 10px 15px;">
+                                    <option value="desc" {% if sort_order=='desc' %}selected{% endif %}>{{ _('En Yeni')
+                                        }}</option>
+                                    <option value="asc" {% if sort_order=='asc' %}selected{% endif %}>{{ _('En Eski') }}
+                                    </option>
                                 </select>
                             </div>
                             <div class="col-md-2 d-grid">
-                                <button type="submit" class="btn btn-glass" style="border-radius: 15px;">Ara</button>
+                                <button type="submit" class="btn btn-glass" style="border-radius: 15px;">{{ _('Ara')
+                                    }}</button>
                             </div>
                         </div>
                     </form>
 
                     <div style="max-height: 700px; overflow-y: auto; padding-right: 10px;">
                         {% if entries %}
-                            {% for entry in entries %}
-                            <div class="card mb-3 shadow-sm" style="background: rgba(255,255,255,0.6); border: none; border-radius: 15px;">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h5 class="card-title m-0 fw-bold text-dark">
-                                            {% if entry.mood == 'mutlu' %}😄 Mutlu
-                                            {% elif entry.mood == 'sakin' %}😌 Sakin
-                                            {% elif entry.mood == 'stresli' %}😰 Stresli
-                                            {% elif entry.mood == 'uzgun' %}😢 Üzgün
-                                            {% elif entry.mood == 'heyecanli' %}🤩 Heyecanlı
-                                            {% else %}{{ entry.mood }}{% endif %}
-                                        </h5>
-                                        <div class="d-flex align-items-center">
-                                            <small class="text-muted me-3">{{ entry.timestamp.strftime('%d.%m.%Y %H:%M') if entry.timestamp else '' }}</small>
-                                            <form method="POST" action="{{ url_for('main.delete_entry', id=entry.id) }}" class="m-0" onsubmit="return confirm('Bu kaydı silmek istediğinden emin misin?');">
-                                                <button type="submit" class="btn btn-sm" title="Sil" style="background: transparent; border: none; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">
-                                                    <span style="font-size: 1.2rem;">🗑️</span>
-                                                </button>
-                                            </form>
-                                        </div>
+                        {% for entry in entries %}
+                        <div class="card mb-3 shadow-sm"
+                            style="background: rgba(255,255,255,0.6); border: none; border-radius: 15px;">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="card-title m-0 fw-bold text-dark">
+                                        {% if entry.mood == 'mutlu' %}😄 {{ _('Mutlu') }}
+                                        {% elif entry.mood == 'sakin' %}😌 {{ _('Sakin') }}
+                                        {% elif entry.mood == 'stresli' %}😰 {{ _('Stresli') }}
+                                        {% elif entry.mood == 'uzgun' %}😢 {{ _('Üzgün') }}
+                                        {% elif entry.mood == 'heyecanli' %}🤩 {{ _('Heyecanlı') }}
+                                        {% else %}{{ entry.mood }}{% endif %}
+                                    </h5>
+                                    <div class="d-flex align-items-center">
+                                        <small class="text-muted me-3">{{ entry.timestamp.strftime('%d.%m.%Y %H:%M') if
+                                            entry.timestamp else '' }}</small>
+                                        <form method="POST" action="{{ url_for('main.delete_entry', id=entry.id) }}"
+                                            class="m-0"
+                                            onsubmit="return confirm('{{ _(\'Bu kaydı silmek istediğinden emin misin?\') }}');">
+                                            <button type="submit" class="btn btn-sm" title="Sil"
+                                                style="background: transparent; border: none; transition: transform 0.2s;"
+                                                onmouseover="this.style.transform='scale(1.2)'"
+                                                onmouseout="this.style.transform='scale(1)'">
+                                                <span style="font-size: 1.2rem;">🗑️</span>
+                                            </button>
+                                        </form>
                                     </div>
-                                    <p class="card-text text-dark" style="white-space: pre-wrap;">{{ entry.text }}</p>
-                                    
-                                    {% if entry.ai_sentiment %}
-                                    <hr class="my-3" style="border-color: rgba(0,0,0,0.1);">
-                                    <div class="ai-insight p-4 rounded-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(240,248,255,0.4) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 8px 32px rgba(106, 17, 203, 0.1);">
-                                        <!-- Parıltı Efekti -->
-                                        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.6) 50%, transparent 60%); background-size: 200% 200%; animation: shine 3s infinite linear; pointer-events: none; opacity: 0.6;"></div>
-                                        
-                                        <div class="d-flex align-items-center mb-3">
-                                            <span class="fs-3 me-2" style="text-shadow: 0 0 10px rgba(106,17,203,0.5);">🤖</span>
-                                            <h6 class="m-0 fw-bold text-uppercase tracking-wide" style="color: #6a11cb; letter-spacing: 1px;">AI İçgörü Kartı</h6>
-                                        </div>
-                                        
-                                        <div class="row g-3 mb-3">
-                                            <div class="col-md-4">
-                                                <div class="p-2 rounded-3 text-center" style="background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.6);">
-                                                    <small class="text-muted d-block text-uppercase" style="font-size: 0.75rem;">Duygu Durumu</small>
-                                                    <strong class="text-dark">{{ entry.ai_sentiment }}</strong>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="p-2 rounded-3 text-center" style="background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.6);">
-                                                    <small class="text-muted d-block text-uppercase" style="font-size: 0.75rem;">Pozitif Skor</small>
-                                                    <strong class="text-dark">{{ entry.ai_score }} / 10</strong>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="p-2 rounded-3 text-center" style="background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.6);">
-                                                    <small class="text-muted d-block text-uppercase" style="font-size: 0.75rem;">Anahtar Kelimeler</small>
-                                                    <strong class="text-dark" style="font-size: 0.9rem;">{{ entry.ai_keywords }}</strong>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="p-3 rounded-3" style="background: rgba(106, 17, 203, 0.05); border-left: 4px solid #6a11cb;">
-                                            <p class="mb-0 text-dark" style="font-size: 0.95rem;"><strong>💡 Tavsiye:</strong> <span style="font-style: italic;">{{ entry.ai_advice }}</span></p>
-                                        </div>
-                                    </div>
-                                    {% endif %}
                                 </div>
+                                <p class="card-text text-dark" style="white-space: pre-wrap;">{{ entry.text }}</p>
+
+                                {% if entry.ai_sentiment %}
+                                <hr class="my-3" style="border-color: rgba(0,0,0,0.1);">
+                                <div class="ai-insight p-4 rounded-4 position-relative overflow-hidden"
+                                    style="background: linear-gradient(135deg, rgba(255,255,255,0.6) 0%, rgba(240,248,255,0.4) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 8px 32px rgba(106, 17, 203, 0.1);">
+                                    <!-- Parıltı Efekti -->
+                                    <div class="position-absolute top-0 start-0 w-100 h-100"
+                                        style="background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.6) 50%, transparent 60%); background-size: 200% 200%; animation: shine 3s infinite linear; pointer-events: none; opacity: 0.6;">
+                                    </div>
+
+                                    <div class="d-flex align-items-center mb-3">
+                                        <span class="fs-3 me-2"
+                                            style="text-shadow: 0 0 10px rgba(106,17,203,0.5);">🤖</span>
+                                        <h6 class="m-0 fw-bold text-uppercase tracking-wide"
+                                            style="color: #6a11cb; letter-spacing: 1px;">{{ _('AI İçgörü Kartı') }}</h6>
+                                    </div>
+
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-4">
+                                            <div class="p-2 rounded-3 text-center"
+                                                style="background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.6);">
+                                                <small class="text-muted d-block text-uppercase"
+                                                    style="font-size: 0.75rem;">{{ _('Duygu Durumu') }}</small>
+                                                <strong class="text-dark">{{ entry.ai_sentiment }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 rounded-3 text-center"
+                                                style="background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.6);">
+                                                <small class="text-muted d-block text-uppercase"
+                                                    style="font-size: 0.75rem;">{{ _('Pozitif Skor') }}</small>
+                                                <strong class="text-dark">{{ entry.ai_score }} / 10</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="p-2 rounded-3 text-center"
+                                                style="background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.6);">
+                                                <small class="text-muted d-block text-uppercase"
+                                                    style="font-size: 0.75rem;">{{ _('Anahtar Kelimeler') }}</small>
+                                                <strong class="text-dark" style="font-size: 0.9rem;">{{
+                                                    entry.ai_keywords }}</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3 rounded-3"
+                                        style="background: rgba(106, 17, 203, 0.05); border-left: 4px solid #6a11cb;">
+                                        <p class="mb-0 text-dark" style="font-size: 0.95rem;"><strong>💡 {{
+                                                _('Tavsiye:') }}</strong> <span style="font-style: italic;">{{
+                                                entry.ai_advice }}</span></p>
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
-                            {% endfor %}
+                        </div>
+                        {% endfor %}
                         {% else %}
-                            <div class="text-center text-muted mt-5">
-                                <p>Henüz bir izin yok. İlk adımını şimdi at.</p>
-                            </div>
+                        <div class="text-center text-muted mt-5">
+                            <p>{{ _('Henüz bir izin yok. İlk adımını şimdi at.') }}</p>
+                        </div>
                         {% endif %}
                     </div>
                 </div>
@@ -331,7 +381,7 @@
         const realSelect = document.getElementById('realMoodSelect');
 
         emojiBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 // Remove active from all
                 emojiBtns.forEach(b => b.classList.remove('active'));
                 // Add active to clicked
@@ -342,13 +392,13 @@
         });
 
         // Set initial active emoji
-        if(realSelect.value) {
+        if (realSelect.value) {
             const activeBtn = document.querySelector(`.emoji-btn[data-value="${realSelect.value}"]`);
-            if(activeBtn) activeBtn.classList.add('active');
+            if (activeBtn) activeBtn.classList.add('active');
         } else {
             // Default select first or middle
             const defaultBtn = document.querySelector(`.emoji-btn[data-value="sakin"]`);
-            if(defaultBtn) {
+            if (defaultBtn) {
                 defaultBtn.classList.add('active');
                 realSelect.value = "sakin";
             }
@@ -357,7 +407,7 @@
         // Chart.js Çizimi
         const chartDataRaw = {{ chart_json | safe }};
         const ctx = document.getElementById('moodChart').getContext('2d');
-        
+
         new Chart(ctx, {
             type: 'line',
             data: {
@@ -385,8 +435,8 @@
                         max: 5.5,
                         ticks: {
                             stepSize: 1,
-                            callback: function(value) {
-                                const labels = {1: '😢', 2: '😰', 3: '😌', 4: '😄', 5: '🤩'};
+                            callback: function (value) {
+                                const labels = { 1: '😢', 2: '😰', 3: '😌', 4: '😄', 5: '🤩' };
                                 return labels[value] || '';
                             }
                         }
@@ -396,8 +446,8 @@
                     legend: { display: false },
                     tooltip: {
                         callbacks: {
-                            label: function(context) {
-                                const labels = {1: 'Üzgün', 2: 'Stresli', 3: 'Sakin', 4: 'Mutlu', 5: 'Heyecanlı'};
+                            label: function (context) {
+                                const labels = { 1: 'Üzgün', 2: 'Stresli', 3: 'Sakin', 4: 'Mutlu', 5: 'Heyecanlı' };
                                 return 'Ortalama: ' + (labels[Math.round(context.raw)] || context.raw);
                             }
                         }
@@ -469,4 +519,5 @@
         }
     </script>
 </body>
+
 </html>

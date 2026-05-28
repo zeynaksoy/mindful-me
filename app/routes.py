@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime, timedelta
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session
 from werkzeug.utils import secure_filename
 from app.forms import MoodEntryForm, ProfileForm
 from app.models import MoodEntry, User
@@ -311,3 +311,9 @@ def profile():
     return render_template('profile.html', user=user, form=form,
                            total_entries=total_entries, mood_counts=mood_counts,
                            best_mood=best_mood, avatar_url=avatar_url)
+
+@main.route('/set_language/<language>')
+def set_language(language):
+    session['language'] = language
+    return redirect(request.referrer or url_for('main.index'))
+

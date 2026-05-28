@@ -1,0 +1,44 @@
+# Çeviri İşlemleri (Flask-Babel)
+
+Projeye Flask-Babel entegrasyonu eklenmiştir. Çevirileri oluşturmak veya güncellemek için aşağıdaki adımları sırasıyla terminal (veya komut istemcisi) üzerinden çalıştırmalısınız.
+
+## 1. Metinleri Çıkarma (Extract)
+Proje kodlarında (Python dosyaları ve HTML şablonları) bulunan ve `_()` içine alınmış tüm metinleri tarayıp bir `messages.pot` (şablon) dosyasına aktarmak için şu komutu çalıştırın:
+```bash
+pybabel extract -F babel.cfg -k _l -o messages.pot .
+```
+
+## 2. Dil Dosyalarını Başlatma (Init) - İlk Kurulum
+İngilizce (`en`) çeviri dosyasını ilk kez oluşturmak için `messages.pot` dosyasını kullanıyoruz:
+```bash
+pybabel init -i messages.pot -d app/translations -l en
+```
+Türkçe (`tr`) varsayılan olsa da ihtiyaca göre başlatılabilir:
+```bash
+pybabel init -i messages.pot -d app/translations -l tr
+```
+Bu komut, `app/translations/en/LC_MESSAGES/messages.po` dosyasını oluşturacaktır.
+
+## 3. Çevirileri Yapma
+Oluşturulan `messages.po` dosyasını herhangi bir metin editöründe veya Poedit uygulamasında açın ve `msgstr` alanlarına çevirileri yazın.
+Örnek:
+```po
+msgid "Şu An Nasılsın?"
+msgstr "How are you feeling right now?"
+```
+
+## 4. Çevirileri Derleme (Compile)
+Çevirileri yazdıktan sonra uygulamanın bunları hızlıca okuyabilmesi için derlemeniz gerekir:
+```bash
+pybabel compile -d app/translations
+```
+
+## 5. Çevirileri Güncelleme (Update) - Sonradan Metin Eklediğinizde
+Eğer uygulamanıza yeni metinler eklerseniz (HTML veya Python içinde), önceki çevirilerin kaybolmaması için init yerine update kullanmalısınız:
+```bash
+# Önce yeni metinleri çıkarın
+pybabel extract -F babel.cfg -k _l -o messages.pot .
+# Sonra mevcut dilleri güncelleyin
+pybabel update -i messages.pot -d app/translations
+```
+Güncellemeden sonra 3. adıma dönüp yeni metinleri çevirin ve 4. adımla tekrar derleyin.
