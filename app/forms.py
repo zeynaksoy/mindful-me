@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import TextAreaField, SelectField, SubmitField, FloatField, IntegerField, StringField
-from wtforms.validators import DataRequired, Optional, NumberRange
+from wtforms import TextAreaField, SelectField, SubmitField, FloatField, IntegerField, StringField, PasswordField
+from wtforms.validators import DataRequired, Optional, NumberRange, Email, EqualTo
 
 class MoodEntryForm(FlaskForm):
     mood = SelectField('Bugün nasıl hissediyorsun?', choices=[
@@ -22,3 +22,15 @@ class ProfileForm(FlaskForm):
         FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Sadece resim dosyaları yüklenebilir!')
     ])
     submit = SubmitField('Profili Güncelle')
+
+class ForgotPasswordForm(FlaskForm):
+    email = StringField('E-posta', validators=[DataRequired(), Email(message='Geçerli bir e-posta adresi giriniz.')])
+    submit = SubmitField('Şifre Sıfırlama Linki Gönder')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Yeni Şifre', validators=[DataRequired()])
+    confirm_password = PasswordField('Şifre Tekrar', validators=[
+        DataRequired(),
+        EqualTo('password', message='Şifreler eşleşmiyor.')
+    ])
+    submit = SubmitField('Şifreyi Sıfırla')

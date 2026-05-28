@@ -2,10 +2,12 @@ from flask import Flask, request, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_babel import Babel
+from flask_mail import Mail
 
 db = SQLAlchemy()
 migrate = Migrate()
 babel = Babel()
+mail = Mail()
 
 def get_locale():
     if 'language' in session:
@@ -20,6 +22,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     babel.init_app(app, locale_selector=get_locale)
+    mail.init_app(app)
 
     with app.app_context():
         from app import models

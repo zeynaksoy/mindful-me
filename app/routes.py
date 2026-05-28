@@ -1,11 +1,13 @@
 import json
 import os
 from datetime import datetime, timedelta
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session, current_app
 from werkzeug.utils import secure_filename
-from app.forms import MoodEntryForm, ProfileForm
+from app.forms import MoodEntryForm, ProfileForm, ForgotPasswordForm, ResetPasswordForm
 from app.models import MoodEntry, User
-from app import db
+from app import db, mail
+from flask_mail import Message
+from itsdangerous import URLSafeTimedSerializer
 
 main = Blueprint('main', __name__)
 
@@ -317,3 +319,52 @@ def set_language(language):
     session['language'] = language
     return redirect(request.referrer or url_for('main.index'))
 
+# ── Şifre Sıfırlama (Forgot Password) ──────────────────────
+def get_reset_token(user, expires_sec=1800):
+    s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    return s.dumps({'user_id': user.id}, salt='password-reset-salt')
+
+def verify_reset_token(token, expires_sec=1800):
+    s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+    try:
+        user_id = s.loads(token, salt='password-reset-salt', max_age=expires_sec)['user_id']
+    except:
+        return None
+    return User.query.get(user_id)
+
+def send_reset_email(user):
+    token = get_reset_token(user)
+    msg = Message('Şifre Sıfırlama İsteği - Mindful-Me',
+                  sender=current_app.config['MAIL_DEFAULT_SENDER'],
+                  recipients=[user.email])
+    msg.body = f'''Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayın:
+{url_for('main.reset_password', token=token, _external=True)}
+
+Eğer bu isteği siz yapmadıysanız bu e-postayı görmezden gelebilirsiniz.
+'''
+    mail.send(msg)
+
+@main.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_reset_email(user)
+        flash('Şifre sıfırlama talimatları e-posta adresinize gönderildi.', 'info')
+        return redirect(url_for('main.index'))
+    return render_template('reset_password_request.html', form=form)
+
+@main.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    user = verify_reset_token(token)
+    if not user:
+        flash('Geçersiz veya süresi dolmuş bir link.', 'warning')
+        return redirect(url_for('main.index'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Şifreniz başarıyla güncellendi!', 'success')
+        return redirect(url_for('main.index'))
+    return render_template('reset_password.html', form=form)
