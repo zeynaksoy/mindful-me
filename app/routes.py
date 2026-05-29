@@ -60,84 +60,91 @@ def analyze_journal_entry(mood, text):
     return sentiment, score, keywords, analysis, advice
 
 def analyze_data(entries):
-    if not entries:
-        return _("Yeterli veri yok. Analiz için daha fazla günlük girmelisin.")
-    
-    activity_moods = {}
-    total_moods = []
-    
-    for entry in entries:
-        val = MOOD_VALUES.get(entry.mood, 3)
-        total_moods.append(val)
-        if entry.activities:
-            acts = [a.strip().lower() for a in entry.activities.split(',')]
-            for act in acts:
-                if act:
-                    if act not in activity_moods:
-                        activity_moods[act] = []
-                    activity_moods[act].append(val)
+    try:
+        if not entries:
+            return _("Yeterli veri yok. Analiz için daha fazla günlük girmelisin.")
+        
+        activity_moods = {}
+        total_moods = []
+        
+        for entry in entries:
+            val = MOOD_VALUES.get(entry.mood, 3)
+            total_moods.append(val)
+            if entry.activities:
+                acts = [a.strip().lower() for a in entry.activities.split(',')]
+                for act in acts:
+                    if act:
+                        if act not in activity_moods:
+                            activity_moods[act] = []
+                        activity_moods[act].append(val)
+                        
+        avg_total = sum(total_moods) / len(total_moods) if total_moods else 3
+        insights = []
+        
+        best_act = None
+        best_diff = 0
+        for act, moods in activity_moods.items():
+            if len(moods) >= 1:
+                avg_act = sum(moods) / len(moods)
+                diff = ((avg_act - avg_total) / avg_total) * 100 if avg_total > 0 else 0
+                if diff > best_diff:
+                    best_diff = diff
+                    best_act = act
                     
-    avg_total = sum(total_moods) / len(total_moods) if total_moods else 3
-    insights = []
-    
-    best_act = None
-    best_diff = 0
-    for act, moods in activity_moods.items():
-        if len(moods) >= 1:
-            avg_act = sum(moods) / len(moods)
-            diff = ((avg_act - avg_total) / avg_total) * 100 if avg_total > 0 else 0
-            if diff > best_diff:
-                best_diff = diff
-                best_act = act
-                
-    if best_act and best_diff > 0:
-        insights.append(_("'%(act)s' yaptığın günlerde mutluluk ortalaman %(diff)s daha yüksek.", act=best_act.title(), diff=f"%{int(best_diff)}"))
-        
-    high_sleep_moods = [MOOD_VALUES.get(e.mood, 3) for e in entries if e.sleep_hours and e.sleep_hours >= 7]
-    low_sleep_moods = [MOOD_VALUES.get(e.mood, 3) for e in entries if e.sleep_hours and e.sleep_hours < 7]
-    
-    if high_sleep_moods and low_sleep_moods:
-        avg_high = sum(high_sleep_moods) / len(high_sleep_moods)
-        avg_low = sum(low_sleep_moods) / len(low_sleep_moods)
-        if avg_high > avg_low:
-            insights.append(_("7 saat ve üzeri uyuduğunda kendini daha pozitif hissediyorsun."))
+        if best_act and best_diff > 0:
+            insights.append(_("'%(act)s' yaptığın günlerde mutluluk ortalaman %(diff)s daha yüksek.", act=best_act.title(), diff=f"%{int(best_diff)}"))
             
-    high_stress = [e for e in entries if e.stress_level and e.stress_level >= 7]
-    if high_stress:
-        insights.append(_("Bazı günlerde stres seviyen yüksek çıkmış, nefes egzersizlerini artırabilirsin."))
+        high_sleep_moods = [MOOD_VALUES.get(e.mood, 3) for e in entries if e.sleep_hours and e.sleep_hours >= 7]
+        low_sleep_moods = [MOOD_VALUES.get(e.mood, 3) for e in entries if e.sleep_hours and e.sleep_hours < 7]
         
-    if not insights:
-        return _("Henüz belirgin bir korelasyon bulamadım, günlüğünü doldurmaya devam et!")
-        
-    return " ".join(insights)
+        if high_sleep_moods and low_sleep_moods:
+            avg_high = sum(high_sleep_moods) / len(high_sleep_moods)
+            avg_low = sum(low_sleep_moods) / len(low_sleep_moods)
+            if avg_high > avg_low:
+                insights.append(_("7 saat ve üzeri uyuduğunda kendini daha pozitif hissediyorsun."))
+                
+        high_stress = [e for e in entries if e.stress_level and e.stress_level >= 7]
+        if high_stress:
+            insights.append(_("Bazı günlerde stres seviyen yüksek çıkmış, nefes egzersizlerini artırabilirsin."))
+            
+        if not insights:
+            return _("Henüz belirgin bir korelasyon bulamadım, günlüğünü doldurmaya devam et!")
+            
+        return " ".join(insights)
+    except Exception as e:
+        return _("Analiz kısmında küçük bir pürüz oluştu, yeni kayıtlar ekledikçe düzelecektir.")
 
 def get_mood_history():
-    thirty_days_ago = datetime.utcnow() - timedelta(days=29)
-    recent_entries = MoodEntry.query.filter(MoodEntry.timestamp >= thirty_days_ago).order_by(MoodEntry.timestamp.asc()).all()
-    
-    daily_data = {}
-    for e in recent_entries:
-        date_str = e.timestamp.strftime('%Y-%m-%d')
-        daily_data[date_str] = {
-            'mood': e.mood,
-            'text': (e.text[:50] + '...') if len(e.text) > 50 else e.text,
-            'date': e.timestamp.strftime('%d %b')
-        }
+    try:
+        thirty_days_ago = datetime.utcnow() - timedelta(days=29)
+        recent_entries = MoodEntry.query.filter(MoodEntry.timestamp >= thirty_days_ago).order_by(MoodEntry.timestamp.asc()).all()
         
-    history = []
-    for i in range(29, -1, -1):
-        day = datetime.utcnow() - timedelta(days=i)
-        date_str = day.strftime('%Y-%m-%d')
-        if date_str in daily_data:
-            history.append(daily_data[date_str])
-        else:
-            history.append({
-                'mood': None,
-                'text': 'Kayıt yok',
-                'date': day.strftime('%d %b')
-            })
+        daily_data = {}
+        for e in recent_entries:
+            if not e.timestamp: continue
+            date_str = e.timestamp.strftime('%Y-%m-%d')
+            daily_data[date_str] = {
+                'mood': e.mood,
+                'text': (e.text[:50] + '...') if len(e.text) > 50 else e.text,
+                'date': e.timestamp.strftime('%d %b')
+            }
             
-    return history
+        history = []
+        for i in range(29, -1, -1):
+            day = datetime.utcnow() - timedelta(days=i)
+            date_str = day.strftime('%Y-%m-%d')
+            if date_str in daily_data:
+                history.append(daily_data[date_str])
+            else:
+                history.append({
+                    'mood': None,
+                    'text': 'Kayıt yok',
+                    'date': day.strftime('%d %b')
+                })
+                
+        return history
+    except Exception as e:
+        return []
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
@@ -185,6 +192,7 @@ def index():
     
     daily_moods = {}
     for e in recent_entries:
+        if not e.timestamp: continue
         date_str = e.timestamp.strftime('%d %b')
         val = MOOD_VALUES.get(e.mood, 3)
         if date_str not in daily_moods:
@@ -237,7 +245,7 @@ def index():
     for i in range(6, -1, -1):
         day = datetime.utcnow() - timedelta(days=i)
         date_str = day.strftime('%Y-%m-%d')
-        count = sum(1 for e in entries_for_stats if e.timestamp.strftime('%Y-%m-%d') == date_str)
+        count = sum(1 for e in entries_for_stats if e.timestamp and e.timestamp.strftime('%Y-%m-%d') == date_str)
         heatmap_data.append({'x': day.strftime('%d %b'), 'y': 'Kayıt', 'v': count})
         
     heatmap_json = json.dumps(heatmap_data)
@@ -280,46 +288,51 @@ AVATARS_DIR = os.path.join(os.path.dirname(__file__), 'static', 'avatars')
 
 @main.route('/profile', methods=['GET', 'POST'])
 def profile():
-    # Varsayılan kullanıcıyı al ya da oluştur
-    user = User.query.first()
-    if not user:
-        user = User(username=_('Mindful Kullanıcı'), email='user@mindful.me', avatar_file='default.png')
-        db.session.add(user)
-        db.session.commit()
+    try:
+        # Varsayılan kullanıcıyı al ya da oluştur
+        user = User.query.first()
+        if not user:
+            user = User(username=_('Mindful Kullanıcı'), email='user@mindful.me', avatar_file='default.png')
+            db.session.add(user)
+            db.session.commit()
 
-    form = ProfileForm()
-    if form.validate_on_submit():
-        user.username = form.username.data
-        user.email = form.email.data
-        file = form.avatar.data
-        if file:
-            filename  = secure_filename(file.filename)
-            # Benzersiz dosya adı: user_id + orijinal uzantı
-            ext       = filename.rsplit('.', 1)[1].lower()
-            save_name = f"avatar_{user.id}.{ext}"
-            os.makedirs(AVATARS_DIR, exist_ok=True)
-            file.save(os.path.join(AVATARS_DIR, save_name))
-            user.avatar_file = save_name
-        db.session.commit()
-        flash(_('Profil başarıyla güncellendi! 🎉'), 'success')
-        return redirect(url_for('main.profile'))
-    elif request.method == 'GET':
-        form.username.data = user.username
-        form.email.data = user.email
+        form = ProfileForm()
+        if form.validate_on_submit():
+            user.username = form.username.data
+            user.email = form.email.data
+            file = form.avatar.data
+            if file and file.filename:
+                filename  = secure_filename(file.filename)
+                # Benzersiz dosya adı: user_id + orijinal uzantı
+                ext       = os.path.splitext(filename)[1].lower() if '.' in filename else ''
+                save_name = f"avatar_{user.id}{ext}"
+                os.makedirs(AVATARS_DIR, exist_ok=True)
+                file.save(os.path.join(AVATARS_DIR, save_name))
+                user.avatar_file = save_name
+            db.session.commit()
+            flash(_('Profil başarıyla güncellendi! 🎉'), 'success')
+            return redirect(url_for('main.profile'))
+        elif request.method == 'GET':
+            form.username.data = user.username
+            form.email.data = user.email
 
-    # İstatistikler
-    total_entries  = MoodEntry.query.count()
-    mood_counts    = {}
-    for e in MoodEntry.query.all():
-        mood_counts[e.mood] = mood_counts.get(e.mood, 0) + 1
-    best_mood      = max(mood_counts, key=mood_counts.get) if mood_counts else None
-    avatar_url     = url_for('static', filename=f'avatars/{user.avatar_file}') \
-                     if user.avatar_file and user.avatar_file != 'default.png' \
-                     else None
+        # İstatistikler
+        total_entries  = MoodEntry.query.count()
+        mood_counts    = {}
+        for e in MoodEntry.query.all():
+            mood_counts[e.mood] = mood_counts.get(e.mood, 0) + 1
+        best_mood      = max(mood_counts, key=mood_counts.get) if mood_counts else None
+        avatar_url     = url_for('static', filename=f'avatars/{user.avatar_file}') \
+                         if user.avatar_file and user.avatar_file != 'default.png' \
+                         else None
 
-    return render_template('profile.html', user=user, form=form,
-                           total_entries=total_entries, mood_counts=mood_counts,
-                           best_mood=best_mood, avatar_url=avatar_url)
+        return render_template('profile.html', user=user, form=form,
+                               total_entries=total_entries, mood_counts=mood_counts,
+                               best_mood=best_mood, avatar_url=avatar_url)
+    except Exception as e:
+        db.session.rollback()
+        flash(_('Profil işlemlerinde geçici bir hata oluştu.'), 'danger')
+        return redirect(url_for('main.index'))
 
 @main.route('/change_password', methods=['GET', 'POST'])
 def change_password():
