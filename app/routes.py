@@ -147,6 +147,46 @@ def get_mood_history():
     except Exception as e:
         return []
 
+def check_badges(user):
+    if not user: return
+    recent_entries = MoodEntry.query.order_by(MoodEntry.timestamp.desc()).limit(3).all()
+    if len(recent_entries) == 3:
+        all_good = True
+        for e in recent_entries:
+            if getattr(e, 'sleep_hours', None) is None or float(e.sleep_hours) < 8:
+                all_good = False
+                break
+        if all_good and not getattr(user, 'has_sleep_master_badge', False):
+            user.has_sleep_master_badge = True
+            try:
+                db.session.commit()
+            except Exception:
+                db.session.rollback()
+
+def get_lifestyle_feedback():
+    recent_entries = MoodEntry.query.order_by(MoodEntry.timestamp.desc()).limit(6).all()
+    if len(recent_entries) >= 6:
+        latest = recent_entries[:3]
+        previous = recent_entries[3:]
+        
+        def avg_screen(entries):
+            vals = [e.screen_time for e in entries if getattr(e, 'screen_time', None) is not None]
+            return sum(vals)/len(vals) if vals else 0
+            
+        def avg_sleep_q(entries):
+            vals = [int(e.sleep_quality) for e in entries if getattr(e, 'sleep_quality', None) is not None and str(e.sleep_quality).isdigit()]
+            return sum(vals)/len(vals) if vals else 0
+            
+        latest_screen = avg_screen(latest)
+        prev_screen = avg_screen(previous)
+        latest_sleep = avg_sleep_q(latest)
+        prev_sleep = avg_sleep_q(previous)
+        
+        if latest_screen > prev_screen and latest_sleep < prev_sleep and prev_sleep > 0:
+            decrease_percent = ((prev_sleep - latest_sleep) / prev_sleep) * 100
+            return _("Son 3 gündür ekran süren arttığı için uyku kaliten %% %(pct)d düşmüş. Bugün ekranı 2 saat erken kapatmaya ne dersin?", pct=int(decrease_percent))
+    return None
+
 def calculate_lifestyle_insights(entries):
     insights = []
     if not entries:
@@ -446,6 +486,10 @@ def profile():
             avatar_file = 'default.png'
             streak_count = 0
         user = DummyUser()
+        user.has_sleep_master_badge = False
+
+    check_badges(user)
+    smart_coach_feedback = get_lifestyle_feedback()
 
     form = ProfileForm()
     if form.validate_on_submit():
@@ -497,12 +541,17 @@ def profile():
         {'name': _('İstikrarlı'), 'icon': '🔥', 'desc': _('7 Günlük Seri'), 'earned': streak >= 7},
         {'name': _('Zen Ustası'), 'icon': '👑', 'desc': _('30 Günlük Seri'), 'earned': streak >= 30}
     ]
+    if getattr(user, 'has_sleep_master_badge', False):
+        badges.append({'name': _('Uyku Ustası'), 'icon': '💤', 'desc': _('3 Gün Üst Üste 8+ Saat Uyku'), 'earned': True})
+    else:
+        badges.append({'name': _('Uyku Ustası'), 'icon': '💤', 'desc': _('3 Gün Üst Üste 8+ Saat Uyku'), 'earned': False})
+        
     insights = calculate_lifestyle_insights(all_entries)
 
     return render_template('profile.html', user=user, form=form,
                            total_entries=total_entries, mood_counts=mood_counts,
                            best_mood=best_mood, avatar_url=avatar_url, badges=badges,
-                           insights=insights)
+                           insights=insights, smart_coach_feedback=smart_coach_feedback)
 
 @main.route('/change_password', methods=['GET', 'POST'])
 def change_password():

@@ -197,6 +197,19 @@
         {% endif %}
         {% endwith %}
 
+        <!-- Akıllı Analiz Kartı -->
+        {% if smart_coach_feedback %}
+        <div class="glass-card mb-4" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 248, 255, 0.9) 100%); border-left: 5px solid #6a11cb; box-shadow: 0 8px 32px rgba(106, 17, 203, 0.2);">
+            <div class="d-flex align-items-center">
+                <span class="fs-1 me-3" style="text-shadow: 0 0 10px rgba(106,17,203,0.5);">🤖</span>
+                <div>
+                    <h5 class="fw-bold mb-1" style="color: #6a11cb;">{{ _('Akıllı Analiz Kartı') }}</h5>
+                    <p class="mb-0 text-dark" style="font-size: 1.05rem;">{{ smart_coach_feedback }}</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Profil Kartı -->
         <div class="glass-card">
             <div class="row align-items-center g-4">
