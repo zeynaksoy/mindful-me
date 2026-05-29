@@ -272,6 +272,25 @@
             </div>
             {% endif %}
         </div>
+
+        <!-- İçgörüler -->
+        <div class="glass-card mt-5">
+            <h5 class="fw-bold mb-4">💡 {{ _('Kişisel İçgörülerim') }}</h5>
+            <div class="d-flex flex-column gap-3">
+                {% if insights %}
+                    {% for insight in insights %}
+                    <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.9);">
+                        <div class="d-flex align-items-center">
+                            <span style="font-size: 1.5rem; margin-right: 15px;">{{ insight.icon }}</span>
+                            <span style="font-weight: 500; color: #444;">{{ insight.text }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted mb-0">{{ _('İçgörü verisi bulunamadı.') }}</p>
+                {% endif %}
+            </div>
+        </div>
  
         <!-- API Dokümantasyonu -->
         <div class="glass-card">

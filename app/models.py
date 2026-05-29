@@ -48,6 +48,14 @@ class MoodEntry(db.Model):
     sleep_hours = db.Column(db.Float, nullable=True)
     stress_level = db.Column(db.Integer, nullable=True)
     activities = db.Column(db.String(255), nullable=True)
+    
+    # Yeni eklenen uyku ve alışkanlık alanları
+    bedtime = db.Column(db.Time, nullable=True)
+    wakeup_time = db.Column(db.Time, nullable=True)
+    sleep_quality = db.Column(db.Integer, nullable=True) # 1-5
+    dream_note = db.Column(db.Text, nullable=True)
+    caffeine_intake = db.Column(db.Integer, nullable=True)
+    screen_time = db.Column(db.Integer, nullable=True)
 
     def to_dict(self):
         return {

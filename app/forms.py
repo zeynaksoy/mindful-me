@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import TextAreaField, SelectField, SubmitField, FloatField, IntegerField, StringField, PasswordField
+from wtforms import TextAreaField, SelectField, SubmitField, FloatField, IntegerField, StringField, PasswordField, TimeField
 from wtforms.validators import DataRequired, Optional, NumberRange, Email, EqualTo
 from flask_babel import lazy_gettext as _l
 
@@ -16,6 +16,18 @@ class MoodEntryForm(FlaskForm):
     sleep_hours = FloatField(_l('Uyku Süresi (Saat)'), validators=[Optional(), NumberRange(min=0, max=24)])
     stress_level = IntegerField(_l('Stres Seviyesi (1-10)'), validators=[Optional(), NumberRange(min=1, max=10)])
     activities = StringField(_l('Aktiviteler (virgülle ayırın)'), validators=[Optional()])
+    
+    # Uyku ve Alışkanlıklar
+    bedtime = TimeField(_l('Uykuya Dalış Saati'), validators=[Optional()])
+    wakeup_time = TimeField(_l('Uyanış Saati'), validators=[Optional()])
+    sleep_quality = SelectField(_l('Uyku Kalitesi (1-5)'), choices=[
+        ('', 'Belirtilmedi'), ('1', '1 - Çok Kötü'), ('2', '2 - Kötü'), 
+        ('3', '3 - İdare Eder'), ('4', '4 - İyi'), ('5', '5 - Çok İyi')
+    ], validators=[Optional()])
+    dream_note = TextAreaField(_l('Rüya Notları'), validators=[Optional()])
+    caffeine_intake = IntegerField(_l('Kafein (Fincan/Kupa)'), validators=[Optional(), NumberRange(min=0)])
+    screen_time = IntegerField(_l('Ekran Süresi (Saat)'), validators=[Optional(), NumberRange(min=0)])
+    
     submit = SubmitField(_l('Kaydet'))
 
 class ProfileForm(FlaskForm):

@@ -147,6 +147,49 @@ def get_mood_history():
     except Exception as e:
         return []
 
+def calculate_insights(entries):
+    insights = []
+    if not entries:
+        return [{'icon': '📊', 'text': _('Yeterli veri biriktiğinde kişisel içgörüleriniz burada görünecek.')}]
+        
+    low_sleep_stress = []
+    caffeine_sleep = []
+    high_quality_mood = []
+    
+    for e in entries:
+        sq = getattr(e, 'sleep_quality', None)
+        sq_val = int(sq) if sq and str(sq).isdigit() else None
+        cf = getattr(e, 'caffeine_intake', None)
+        stress = getattr(e, 'stress_level', None)
+        sleep_h = getattr(e, 'sleep_hours', None)
+        
+        if sleep_h is not None and stress is not None:
+            if sleep_h < 6:
+                low_sleep_stress.append(stress)
+                
+        if cf is not None and sq_val is not None:
+            if cf >= 3:
+                caffeine_sleep.append(sq_val)
+                
+        if sq_val is not None and sq_val >= 4:
+            high_quality_mood.append(e.mood)
+            
+    if low_sleep_stress and sum(low_sleep_stress)/len(low_sleep_stress) >= 6:
+        insights.append({'icon': '⚠️', 'text': _('6 saatten az uyuduğunuz günlerde stres seviyeniz genel olarak yüksek.')})
+        
+    if caffeine_sleep and sum(caffeine_sleep)/len(caffeine_sleep) <= 3:
+        insights.append({'icon': '☕', 'text': _('3 fincandan fazla kafein aldığınızda uyku kaliteniz genelde düşüyor.')})
+        
+    if high_quality_mood:
+        good_moods = [m for m in high_quality_mood if m in ['mutlu', 'heyecanli', 'sakin']]
+        if len(good_moods) / len(high_quality_mood) > 0.5:
+            insights.append({'icon': '✨', 'text': _('İyi uyuduğunuz günlerde ruh haliniz belirgin şekilde daha pozitif!')})
+            
+    if not insights:
+        insights.append({'icon': '📊', 'text': _('İçgörü oluşturmak için birkaç gün daha veri girmeye devam edin.')})
+        
+    return insights
+
 @main.route('/', methods=['GET', 'POST'])
 def index():
     form = MoodEntryForm()
@@ -162,7 +205,13 @@ def index():
             ai_advice=advice,
             ai_sentiment=sentiment,
             ai_score=score,
-            ai_keywords=keywords
+            ai_keywords=keywords,
+            bedtime=form.bedtime.data,
+            wakeup_time=form.wakeup_time.data,
+            sleep_quality=int(form.sleep_quality.data) if form.sleep_quality.data else None,
+            dream_note=form.dream_note.data,
+            caffeine_intake=form.caffeine_intake.data,
+            screen_time=form.screen_time.data
         )
         db.session.add(entry)
         
@@ -357,9 +406,14 @@ def profile():
         if streak >= 30:
             badges.append({'name': _('Zen Ustası'), 'icon': '👑', 'desc': _('30 Günlük Seri')})
 
+        # İçgörüler
+        all_entries = MoodEntry.query.all()
+        insights = calculate_insights(all_entries)
+
         return render_template('profile.html', user=user, form=form,
                                total_entries=total_entries, mood_counts=mood_counts,
-                               best_mood=best_mood, avatar_url=avatar_url, badges=badges)
+                               best_mood=best_mood, avatar_url=avatar_url, badges=badges,
+                               insights=insights)
     except Exception as e:
         db.session.rollback()
         flash(_('Profil işlemlerinde geçici bir hata oluştu.'), 'danger')
