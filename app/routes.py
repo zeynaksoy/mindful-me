@@ -208,7 +208,7 @@ def index():
             ai_keywords=keywords,
             bedtime=form.bedtime.data,
             wakeup_time=form.wakeup_time.data,
-            sleep_quality=int(form.sleep_quality.data) if form.sleep_quality.data else None,
+            sleep_quality=int(form.sleep_quality.data) if form.sleep_quality.data and str(form.sleep_quality.data).isdigit() else None,
             dream_note=form.dream_note.data,
             caffeine_intake=form.caffeine_intake.data,
             screen_time=form.screen_time.data
@@ -345,6 +345,7 @@ def api_entries():
         query = query.filter(MoodEntry.mood == mood)
     if limit:
         query = query.limit(limit)
+        
     entries = query.all()
     return jsonify({
         'status':  'ok',
@@ -358,22 +359,32 @@ AVATARS_DIR = os.path.join(os.path.dirname(__file__), 'static', 'avatars')
 
 @main.route('/profile', methods=['GET', 'POST'])
 def profile():
+    # 1. Kullanıcıyı güvenli çekme
     try:
-        # Varsayılan kullanıcıyı al ya da oluştur
         user = User.query.first()
         if not user:
             user = User(username=_('Mindful Kullanıcı'), email='user@mindful.me', avatar_file='default.png')
             db.session.add(user)
             db.session.commit()
+    except Exception:
+        db.session.rollback()
+        # Veritabanı User tablosu uyumsuzsa sahte kullanıcı (mock) oluştur
+        class DummyUser:
+            id = 1
+            username = 'Mindful Kullanıcı'
+            email = 'user@mindful.me'
+            avatar_file = 'default.png'
+            streak_count = 0
+        user = DummyUser()
 
-        form = ProfileForm()
-        if form.validate_on_submit():
+    form = ProfileForm()
+    if form.validate_on_submit():
+        try:
             user.username = form.username.data
             user.email = form.email.data
             file = form.avatar.data
             if file and file.filename:
                 filename  = secure_filename(file.filename)
-                # Benzersiz dosya adı: user_id + orijinal uzantı
                 ext       = os.path.splitext(filename)[1].lower() if '.' in filename else ''
                 save_name = f"avatar_{user.id}{ext}"
                 os.makedirs(AVATARS_DIR, exist_ok=True)
@@ -381,43 +392,47 @@ def profile():
                 user.avatar_file = save_name
             db.session.commit()
             flash(_('Profil başarıyla güncellendi! 🎉'), 'success')
-            return redirect(url_for('main.profile'))
-        elif request.method == 'GET':
-            form.username.data = user.username
-            form.email.data = user.email
+        except Exception:
+            db.session.rollback()
+            flash(_('Profil güncellenirken hata oluştu (Veritabanı şema sorunu).'), 'danger')
+        return redirect(url_for('main.profile'))
+    elif request.method == 'GET':
+        form.username.data = getattr(user, 'username', '')
+        form.email.data = getattr(user, 'email', '')
 
-        # İstatistikler
+    # 2. İstatistikleri güvenli çekme
+    try:
         total_entries  = MoodEntry.query.count()
-        mood_counts    = {}
-        for e in MoodEntry.query.all():
-            mood_counts[e.mood] = mood_counts.get(e.mood, 0) + 1
-        best_mood      = max(mood_counts, key=mood_counts.get) if mood_counts else None
-        avatar_url     = url_for('static', filename=f'avatars/{user.avatar_file}') \
-                         if user.avatar_file and user.avatar_file != 'default.png' \
-                         else None
-
-        # Rozet Mantığı
-        badges = []
-        streak = getattr(user, 'streak_count', 0) or 0
-        if streak >= 3:
-            badges.append({'name': _('Başlangıç'), 'icon': '🌱', 'desc': _('3 Günlük Seri')})
-        if streak >= 7:
-            badges.append({'name': _('İstikrarlı'), 'icon': '🔥', 'desc': _('7 Günlük Seri')})
-        if streak >= 30:
-            badges.append({'name': _('Zen Ustası'), 'icon': '👑', 'desc': _('30 Günlük Seri')})
-
-        # İçgörüler
         all_entries = MoodEntry.query.all()
-        insights = calculate_insights(all_entries)
-
-        return render_template('profile.html', user=user, form=form,
-                               total_entries=total_entries, mood_counts=mood_counts,
-                               best_mood=best_mood, avatar_url=avatar_url, badges=badges,
-                               insights=insights)
-    except Exception as e:
+    except Exception:
         db.session.rollback()
-        flash(_('Profil işlemlerinde geçici bir hata oluştu.'), 'danger')
-        return redirect(url_for('main.index'))
+        total_entries = 0
+        all_entries = []
+
+    mood_counts    = {}
+    for e in all_entries:
+        if getattr(e, 'mood', None):
+            mood_counts[e.mood] = mood_counts.get(e.mood, 0) + 1
+            
+    best_mood      = max(mood_counts, key=mood_counts.get) if mood_counts else None
+    
+    avatar_file = getattr(user, 'avatar_file', 'default.png')
+    avatar_url     = url_for('static', filename=f'avatars/{avatar_file}') \
+                     if avatar_file and avatar_file != 'default.png' \
+                     else None
+
+    streak = getattr(user, 'streak_count', 0) or 0
+    badges = [
+        {'name': _('Başlangıç'), 'icon': '🌱', 'desc': _('3 Günlük Seri'), 'earned': streak >= 3},
+        {'name': _('İstikrarlı'), 'icon': '🔥', 'desc': _('7 Günlük Seri'), 'earned': streak >= 7},
+        {'name': _('Zen Ustası'), 'icon': '👑', 'desc': _('30 Günlük Seri'), 'earned': streak >= 30}
+    ]
+    insights = calculate_insights(all_entries)
+
+    return render_template('profile.html', user=user, form=form,
+                           total_entries=total_entries, mood_counts=mood_counts,
+                           best_mood=best_mood, avatar_url=avatar_url, badges=badges,
+                           insights=insights)
 
 @main.route('/change_password', methods=['GET', 'POST'])
 def change_password():

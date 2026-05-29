@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import TextAreaField, SelectField, SubmitField, FloatField, IntegerField, StringField, PasswordField, TimeField
+from wtforms import TextAreaField, SelectField, SubmitField, FloatField, IntegerField, StringField, PasswordField
+from wtforms.fields import TimeField
 from wtforms.validators import DataRequired, Optional, NumberRange, Email, EqualTo
 from flask_babel import lazy_gettext as _l
 

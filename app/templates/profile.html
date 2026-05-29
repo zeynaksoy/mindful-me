@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +14,7 @@
             min-height: 100vh;
             color: #2c3e50;
         }
+
         .glass-card {
             background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(15px);
@@ -23,16 +25,18 @@
             padding: 2rem;
             margin-bottom: 2rem;
         }
+
         .btn-glass {
-            background: rgba(255,255,255,0.6);
-            border: 1px solid rgba(255,255,255,0.8);
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             color: #2c3e50;
             font-weight: bold;
             border-radius: 50px;
             transition: all 0.3s;
         }
+
         .btn-glass:hover {
-            background: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.9);
             transform: translateY(-2px);
         }
 
@@ -41,16 +45,21 @@
             position: relative;
             display: inline-block;
         }
+
         .avatar-circle {
             width: 140px;
             height: 140px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid rgba(255,255,255,0.9);
-            box-shadow: 0 8px 25px rgba(106,17,203,0.25);
+            border: 4px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 25px rgba(106, 17, 203, 0.25);
             transition: transform 0.3s;
         }
-        .avatar-circle:hover { transform: scale(1.04); }
+
+        .avatar-circle:hover {
+            transform: scale(1.04);
+        }
+
         .avatar-placeholder {
             width: 140px;
             height: 140px;
@@ -60,38 +69,49 @@
             align-items: center;
             justify-content: center;
             font-size: 3.5rem;
-            border: 4px solid rgba(255,255,255,0.9);
-            box-shadow: 0 8px 25px rgba(106,17,203,0.25);
+            border: 4px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 25px rgba(106, 17, 203, 0.25);
             transition: transform 0.3s;
         }
-        .avatar-placeholder:hover { transform: scale(1.04); }
+
+        .avatar-placeholder:hover {
+            transform: scale(1.04);
+        }
 
         /* Upload zone */
         .upload-zone {
-            border: 2px dashed rgba(106,17,203,0.3);
+            border: 2px dashed rgba(106, 17, 203, 0.3);
             border-radius: 16px;
             padding: 1.5rem;
             text-align: center;
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
             cursor: pointer;
             transition: all 0.3s;
         }
+
         .upload-zone:hover {
             border-color: #6a11cb;
-            background: rgba(106,17,203,0.05);
+            background: rgba(106, 17, 203, 0.05);
         }
-        .upload-zone input[type="file"] { display: none; }
+
+        .upload-zone input[type="file"] {
+            display: none;
+        }
 
         /* Stat badges */
         .stat-badge {
-            background: rgba(255,255,255,0.6);
-            border: 1px solid rgba(255,255,255,0.8);
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 16px;
             padding: 1.2rem 1rem;
             text-align: center;
             transition: transform 0.2s;
         }
-        .stat-badge:hover { transform: translateY(-3px); }
+
+        .stat-badge:hover {
+            transform: translateY(-3px);
+        }
+
         .stat-badge .stat-num {
             font-size: 2rem;
             font-weight: 700;
@@ -102,42 +122,62 @@
 
         /* API doc card */
         .api-card {
-            background: rgba(30,30,60,0.85);
+            background: rgba(30, 30, 60, 0.85);
             border-radius: 16px;
             padding: 1.5rem;
             color: #e0e0ff;
             font-family: 'Courier New', monospace;
         }
-        .api-card .method { color: #79ffe1; font-weight: 700; }
-        .api-card .url    { color: #f0e68c; }
-        .api-card .param  { color: #ff9fd8; }
+
+        .api-card .method {
+            color: #79ffe1;
+            font-weight: 700;
+        }
+
+        .api-card .url {
+            color: #f0e68c;
+        }
+
+        .api-card .param {
+            color: #ff9fd8;
+        }
 
         /* Flash messages */
         .alert-glass {
-            background: rgba(46,204,113,0.2);
-            border: 1px solid rgba(46,204,113,0.5);
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.5);
             border-radius: 14px;
             backdrop-filter: blur(10px);
         }
 
         @keyframes float {
-            0%,100% { transform: translateY(0); }
-            50%      { transform: translateY(-6px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
         }
-        .float-anim { animation: float 3s ease-in-out infinite; }
+
+        .float-anim {
+            animation: float 3s ease-in-out infinite;
+        }
     </style>
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light mb-4"
-         style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
+        style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);">
         <div class="container">
             <a class="navbar-brand fw-bold text-dark" href="{{ url_for('main.index') }}">🌿 Mindful-Me</a>
             <div class="ms-auto d-flex align-items-center gap-3">
                 <a href="{{ url_for('main.index') }}" class="btn btn-glass btn-sm">{{ _('← Ana Sayfa') }}</a>
-                <a href="{{ url_for('main.api_entries') }}" target="_blank"
-                   class="btn btn-sm"
-                   style="background: rgba(106,17,203,0.15); border: 1px solid rgba(106,17,203,0.3); border-radius:50px; color:#6a11cb; font-weight:600;">
+                <a href="{{ url_for('main.api_entries') }}" target="_blank" class="btn btn-sm"
+                    style="background: rgba(106,17,203,0.15); border: 1px solid rgba(106,17,203,0.3); border-radius:50px; color:#6a11cb; font-weight:600;">
                     🔌 {{ _('API') }}
                 </a>
             </div>
@@ -149,11 +189,11 @@
         <!-- Flash -->
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            {% for category, message in messages %}
-            <div class="alert alert-glass d-flex align-items-center mb-4" role="alert">
-                <span class="me-2">🎉</span>{{ message }}
-            </div>
-            {% endfor %}
+        {% for category, message in messages %}
+        <div class="alert alert-glass d-flex align-items-center mb-4" role="alert">
+            <span class="me-2">🎉</span>{{ message }}
+        </div>
+        {% endfor %}
         {% endif %}
         {% endwith %}
 
@@ -183,11 +223,13 @@
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 {{ form.username.label(class_="form-label fw-semibold text-muted small mb-1") }}
-                                {{ form.username(class_="form-control bg-light border-0", style="border-radius:12px; padding:0.8rem;") }}
+                                {{ form.username(class_="form-control bg-light border-0", style="border-radius:12px;
+                                padding:0.8rem;") }}
                             </div>
                             <div class="col-md-6 mt-3 mt-md-0">
                                 {{ form.email.label(class_="form-label fw-semibold text-muted small mb-1") }}
-                                {{ form.email(class_="form-control bg-light border-0", style="border-radius:12px; padding:0.8rem;") }}
+                                {{ form.email(class_="form-control bg-light border-0", style="border-radius:12px;
+                                padding:0.8rem;") }}
                             </div>
                         </div>
 
@@ -200,10 +242,10 @@
 
                         <!-- Önizleme -->
                         <div id="previewBox" class="text-center mb-3" style="display:none;">
-                            <img id="previewImg" src="" alt="{{ _('Önizleme') }}"
-                                 style="width:100px;height:100px;border-radius:50%;object-fit:cover;
+                            <img id="previewImg" src="" alt="{{ _('Önizleme') }}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;
                                         border:3px solid #6a11cb;box-shadow:0 4px 15px rgba(106,17,203,0.3);">
-                            <p class="text-muted mt-2" style="font-size:0.85rem;">{{ _('Önizleme – Kaydetmek için butona bas') }}</p>
+                            <p class="text-muted mt-2" style="font-size:0.85rem;">{{ _('Önizleme – Kaydetmek için butona
+                                bas') }}</p>
                         </div>
 
                         {% for error in form.avatar.errors %}
@@ -212,7 +254,8 @@
 
                         <div class="d-flex flex-column flex-md-row gap-3 mt-4">
                             {{ form.submit(class_="btn btn-glass flex-grow-1 py-2") }}
-                            <a href="{{ url_for('main.change_password') }}" class="btn flex-grow-1 py-2 fw-bold" style="background: rgba(255,107,129,0.1); border: 1px solid rgba(255,107,129,0.3); color: #ff4757; border-radius: 50px; transition: all 0.3s;">
+                            <a href="{{ url_for('main.change_password') }}" class="btn flex-grow-1 py-2 fw-bold"
+                                style="background: rgba(255,107,129,0.1); border: 1px solid rgba(255,107,129,0.3); color: #ff4757; border-radius: 50px; transition: all 0.3s;">
                                 🔒 {{ _('Şifre Değiştir') }}
                             </a>
                         </div>
@@ -223,19 +266,19 @@
 
         <!-- Rozetler ve Seri -->
         <div class="glass-card mt-5">
-            <h5 class="fw-bold mb-4">🏆 {{ _('Kazanılan Rozetler (Seri: %(count)s Gün)', count=(user.streak_count or 0)) }}</h5>
+            <h5 class="fw-bold mb-4">🏆 {{ _('Kazanılan Rozetler (Seri: %(count)s Gün)', count=(user.streak_count if user and user.streak_count else 0)) }}</h5>
             <div class="d-flex flex-wrap gap-3">
-                {% if badges %}
-                    {% for badge in badges %}
-                    <div class="glass-card text-center p-3" style="min-width: 120px; border-radius: 15px; background: rgba(255,255,255,0.9);">
-                        <div style="font-size: 2.5rem;">{{ badge.icon }}</div>
-                        <div class="fw-bold mt-2" style="font-size: 0.9rem; color: #6a11cb;">{{ badge.name }}</div>
-                        <div class="text-muted small">{{ badge.desc }}</div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <p class="text-muted small mb-0">{{ _('Henüz bir rozet kazanmadınız. Günlük girmeye başlayın!') }}</p>
-                {% endif %}
+                {% for badge in badges %}
+                <div class="glass-card text-center p-3"
+                    style="min-width: 120px; border-radius: 15px; background: rgba(255,255,255,0.9); {% if not badge.earned %}opacity: 0.5; filter: grayscale(100%);{% endif %}">
+                    <div style="font-size: 2.5rem;">{{ badge.icon }}</div>
+                    <div class="fw-bold mt-2" style="font-size: 0.9rem; color: #6a11cb;">{{ badge.name }}</div>
+                    <div class="text-muted small">{{ badge.desc }}</div>
+                    {% if not badge.earned %}
+                    <div class="text-muted small mt-2" style="font-size: 0.75rem;">{{ _('Henüz kazanılmadı') }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
             </div>
         </div>
 
@@ -250,24 +293,27 @@
                     </div>
                 </div>
                 {% set mood_emojis = {'mutlu':'😄','sakin':'😌','stresli':'😰','uzgun':'😢','heyecanli':'🤩'} %}
-                {% set mood_labels = {'mutlu':_('Mutlu'),'sakin':_('Sakin'),'stresli':_('Stresli'),'uzgun':_('Üzgün'),'heyecanli':_('Heyecanlı')} %}
+                {% set mood_labels =
+                {'mutlu':_('Mutlu'),'sakin':_('Sakin'),'stresli':_('Stresli'),'uzgun':_('Üzgün'),'heyecanli':_('Heyecanlı')}
+                %}
                 {% for mood_key, count in mood_counts.items() %}
                 <div class="col-6 col-md-3">
                     <div class="stat-badge">
                         <div class="stat-num">{{ count }}</div>
-                        <small class="text-muted">{{ mood_emojis.get(mood_key,'❓') }} {{ mood_labels.get(mood_key, mood_key) }}</small>
+                        <small class="text-muted">{{ mood_emojis.get(mood_key,'❓') }} {{ mood_labels.get(mood_key,
+                            mood_key) }}</small>
                     </div>
                 </div>
                 {% endfor %}
             </div>
- 
+
             {% if best_mood %}
-            <div class="mt-4 p-3 rounded-3 text-center"
-                 style="background:linear-gradient(135deg,rgba(106,17,203,0.1),rgba(37,117,252,0.1));
+            <div class="mt-4 p-3 rounded-3 text-center" style="background:linear-gradient(135deg,rgba(106,17,203,0.1),rgba(37,117,252,0.1));
                          border:1px solid rgba(106,17,203,0.2);">
                 <p class="mb-0 fw-semibold">
                     {{ _('En sık hissettiğin duygu:') }}
-                    <span style="color:#6a11cb;">{{ mood_emojis.get(best_mood,'') }} {{ mood_labels.get(best_mood, best_mood) }}</span>
+                    <span style="color:#6a11cb;">{{ mood_emojis.get(best_mood,'') }} {{ mood_labels.get(best_mood,
+                        best_mood) }}</span>
                 </p>
             </div>
             {% endif %}
@@ -278,20 +324,21 @@
             <h5 class="fw-bold mb-4">💡 {{ _('Kişisel İçgörülerim') }}</h5>
             <div class="d-flex flex-column gap-3">
                 {% if insights %}
-                    {% for insight in insights %}
-                    <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.9);">
-                        <div class="d-flex align-items-center">
-                            <span style="font-size: 1.5rem; margin-right: 15px;">{{ insight.icon }}</span>
-                            <span style="font-weight: 500; color: #444;">{{ insight.text }}</span>
-                        </div>
+                {% for insight in insights %}
+                <div class="p-3 rounded-3"
+                    style="background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.9);">
+                    <div class="d-flex align-items-center">
+                        <span style="font-size: 1.5rem; margin-right: 15px;">{{ insight.icon }}</span>
+                        <span style="font-weight: 500; color: #444;">{{ insight.text }}</span>
                     </div>
-                    {% endfor %}
+                </div>
+                {% endfor %}
                 {% else %}
-                    <p class="text-muted mb-0">{{ _('İçgörü verisi bulunamadı.') }}</p>
+                <p class="text-muted mb-0">{{ _('İçgörü verisi bulunamadı.') }}</p>
                 {% endif %}
             </div>
         </div>
- 
+
         <!-- API Dokümantasyonu -->
         <div class="glass-card">
             <h5 class="fw-bold mb-4">🔌 {{ _('API Referansı') }} <code style="font-size:0.8rem;">/api/v1</code></h5>
@@ -308,12 +355,12 @@
                 </p>
             </div>
             <div class="d-flex gap-2 flex-wrap">
-                <a href="{{ url_for('main.api_entries') }}" target="_blank"
-                   class="btn btn-glass btn-sm">{{ _('Tüm Kayıtlar →') }}</a>
-                <a href="{{ url_for('main.api_entries') }}?limit=5" target="_blank"
-                   class="btn btn-glass btn-sm">{{ _('Son 5 Kayıt →') }}</a>
-                <a href="{{ url_for('main.api_entries') }}?mood=mutlu" target="_blank"
-                   class="btn btn-glass btn-sm">{{ _('Mutlu Kayıtlar →') }}</a>
+                <a href="{{ url_for('main.api_entries') }}" target="_blank" class="btn btn-glass btn-sm">{{ _('Tüm
+                    Kayıtlar →') }}</a>
+                <a href="{{ url_for('main.api_entries') }}?limit=5" target="_blank" class="btn btn-glass btn-sm">{{
+                    _('Son 5 Kayıt →') }}</a>
+                <a href="{{ url_for('main.api_entries') }}?mood=mutlu" target="_blank" class="btn btn-glass btn-sm">{{
+                    _('Mutlu Kayıtlar →') }}</a>
             </div>
         </div>
 
@@ -324,7 +371,7 @@
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 document.getElementById('previewImg').src = e.target.result;
                 document.getElementById('previewBox').style.display = 'block';
             };
@@ -332,4 +379,5 @@
         }
     </script>
 </body>
+
 </html>
