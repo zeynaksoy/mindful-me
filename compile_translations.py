@@ -46,7 +46,7 @@ def main():
     print("=" * 60)
     print(f"Derleme tamamlandı! Başarıyla derlenen katalog sayısı: {compiled_count}")
     print("=" * 60)
-    input("\nKapatmak için ENTER tuşuna basın...")
+    pass
 
 if __name__ == '__main__':
     main()
