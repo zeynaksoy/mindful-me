@@ -43,6 +43,8 @@ class MoodEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     mood = db.Column(db.String(20), nullable=False)
     text = db.Column(db.Text, nullable=False)
+    mini_journal = db.Column(db.String(255), nullable=True)
+    free_writing = db.Column(db.Text, nullable=True)
     timestamp = db.Column(db.DateTime, index=True, default=db.func.now())
     ai_analysis = db.Column(db.String(255), nullable=True)
     ai_advice = db.Column(db.Text, nullable=True)
@@ -74,6 +76,8 @@ class MoodEntry(db.Model):
             'id': self.id,
             'mood': self.mood,
             'text': self.text,
+            'mini_journal': self.mini_journal,
+            'free_writing': self.free_writing,
             'timestamp': self.timestamp.isoformat() if self.timestamp else None,
             'sleep_hours': self.sleep_hours,
             'stress_level': self.stress_level,

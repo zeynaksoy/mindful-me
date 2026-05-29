@@ -173,8 +173,14 @@
                             <span class="emoji-btn" data-value="heyecanli" title="{{ _('Heyecanlı') }}">🤩</span>
                         </div>
 
+                        <div class="mb-3">
+                            {{ form.text(class_="form-control", rows="2", placeholder=_("Hızlı Not... (İsteğe bağlı)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px;") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.mini_journal(class_="form-control", placeholder=_("Günün Özeti (Mini Journal)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px;") }}
+                        </div>
                         <div class="mb-4">
-                            {{ form.text(class_="form-control", rows="3", placeholder=_("İçinden geçenleri dök... (İsteğe bağlı)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px;") }}
+                            {{ form.free_writing(class_="form-control", rows="4", placeholder=_("Duygularını Dök (Serbest Yazı) - Yapay Zeka daha iyi analiz edebilsin..."), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px;") }}
                         </div>
                         <div class="row mb-4">
                             <div class="col-md-3">
@@ -331,7 +337,14 @@
                                         </form>
                                     </div>
                                 </div>
+                                {% if entry.mini_journal %}
+                                <p class="card-text text-dark mb-2"><strong>{{ _('Özet:') }}</strong> {{ entry.mini_journal }}</p>
+                                {% endif %}
+                                {% if entry.free_writing %}
+                                <p class="card-text text-dark" style="white-space: pre-wrap;"><strong>{{ _('Duygularım:') }}</strong> {{ entry.free_writing }}</p>
+                                {% elif entry.text %}
                                 <p class="card-text text-dark" style="white-space: pre-wrap;">{{ entry.text }}</p>
+                                {% endif %}
 
                                 {% if entry.ai_sentiment %}
                                 <hr class="my-3" style="border-color: rgba(0,0,0,0.1);">

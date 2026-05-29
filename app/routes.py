@@ -60,13 +60,14 @@ SUGGESTIONS = {
     'uzgun': _l('Bir bardak su iç ve kendine sarıl. Duygularını hissetmek tamamen normal, geçici olduklarını unutma.')
 }
 
-def analyze_journal_entry(mood, text):
-    words = text.lower().replace('.', '').replace(',', '').split() if text else []
+def analyze_journal_entry(mood, text, free_writing=None):
+    analysis_text = free_writing if free_writing and len(free_writing.strip()) > 5 else text
+    words = analysis_text.lower().replace('.', '').replace(',', '').split() if analysis_text else []
     stop_words = ['bir', 've', 'ile', 'çok', 'için', 'daha', 'bu', 'şu', 'o', 'ama', 'fakat']
     keywords_list = [w for w in words if w not in stop_words and len(w) > 3][:3]
     keywords = ", ".join(keywords_list) if keywords_list else mood
     
-    if not text or len(text.strip()) < 5:
+    if not analysis_text or len(analysis_text.strip()) < 5:
         sentiment = _("Nötr")
         score = 5
         translated_mood = _(mood.capitalize())
@@ -359,10 +360,12 @@ def generate_comprehensive_report(entries):
 def index():
     form = MoodEntryForm()
     if form.validate_on_submit():
-        sentiment, score, keywords, analysis, advice = analyze_journal_entry(form.mood.data, form.text.data)
+        sentiment, score, keywords, analysis, advice = analyze_journal_entry(form.mood.data, form.text.data, form.free_writing.data)
         entry = MoodEntry(
             mood=form.mood.data, 
             text=form.text.data,
+            mini_journal=form.mini_journal.data,
+            free_writing=form.free_writing.data,
             sleep_hours=form.sleep_hours.data,
             stress_level=form.stress_level.data,
             activities=form.activities.data,

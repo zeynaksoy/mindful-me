@@ -14,6 +14,8 @@ class MoodEntryForm(FlaskForm):
         ('heyecanli', _l('Heyecanlı 🤩'))
     ], validators=[DataRequired()])
     text = TextAreaField(_l('Neler düşünüyorsun?'), validators=[DataRequired()])
+    mini_journal = StringField(_l('Günün Özeti'), validators=[Optional()])
+    free_writing = TextAreaField(_l('Duygularını Dök'), validators=[Optional()])
     sleep_hours = FloatField(_l('Uyku Süresi (Saat)'), validators=[Optional(), NumberRange(min=0, max=24)])
     stress_level = IntegerField(_l('Stres Seviyesi (1-10)'), validators=[Optional(), NumberRange(min=1, max=10)])
     activities = StringField(_l('Aktiviteler (virgülle ayırın)'), validators=[Optional()])
