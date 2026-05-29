@@ -5,13 +5,44 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from werkzeug.utils import secure_filename
 from app.forms import MoodEntryForm, ProfileForm, ForgotPasswordForm, ResetPasswordForm, ChangePasswordForm
 from app.models import MoodEntry, User
-from app import db, mail
+from app import db, mail, scheduler
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer
 from flask_babel import gettext as _, lazy_gettext as _l
 from app.email import send_password_reset_email
 
 main = Blueprint('main', __name__)
+
+@main.before_request
+def check_pending_notifications():
+    try:
+        user = User.query.first()
+        if user:
+            user.last_login = datetime.utcnow()
+            if getattr(user, 'pending_notification', None):
+                flash(user.pending_notification)
+                user.pending_notification = None
+            db.session.commit()
+    except Exception:
+        db.session.rollback()
+
+@scheduler.task('cron', id='check_daily_moods', hour=20, minute=0)
+def check_daily_moods():
+    with scheduler.app.app_context():
+        users = User.query.all()
+        today = datetime.utcnow().date()
+        yesterday = today - timedelta(days=1)
+        for user in users:
+            if getattr(user, 'last_login', None) and (datetime.utcnow() - user.last_login).days <= 2:
+                # Bugunun kaydi var mi? (Tek kullanicili sistem oldugu icin genel kontrol)
+                today_entry = MoodEntry.query.filter(db.func.date(MoodEntry.timestamp) == today).first()
+                if not today_entry:
+                    yesterday_entry = MoodEntry.query.filter(db.func.date(MoodEntry.timestamp) == yesterday).first()
+                    if yesterday_entry and (getattr(yesterday_entry, 'stress_level', 0) > 7 or yesterday_entry.mood in ['stresli', 'uzgun']):
+                        user.pending_notification = _l("Dün kötü hissettiğini belirtmiştin, bugün nasılsın?")
+                    else:
+                        user.pending_notification = _l("Bugünkü ruh halini kaydetmek ister misin?")
+        db.session.commit()
 
 MOOD_VALUES = {
     'heyecanli': 5,

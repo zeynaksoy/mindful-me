@@ -1,13 +1,16 @@
 from flask import Flask, request, session, render_template
+import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_babel import Babel
 from flask_mail import Mail
+from flask_apscheduler import APScheduler
 
 db = SQLAlchemy()
 migrate = Migrate()
 babel = Babel()
 mail = Mail()
+scheduler = APScheduler()
 
 def get_locale():
     if 'language' in session:
@@ -23,6 +26,10 @@ def create_app():
     migrate.init_app(app, db)
     babel.init_app(app, locale_selector=get_locale)
     mail.init_app(app)
+    scheduler.init_app(app)
+    
+    if not app.debug or os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+        scheduler.start()
 
     with app.app_context():
         from app import models

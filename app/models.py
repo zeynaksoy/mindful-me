@@ -13,6 +13,9 @@ class User(db.Model):
     streak_count = db.Column(db.Integer, default=0)
     last_entry_date = db.Column(db.Date, nullable=True)
     has_sleep_master_badge = db.Column(db.Boolean, default=False)
+    
+    last_login = db.Column(db.DateTime, default=db.func.now())
+    pending_notification = db.Column(db.String(255), nullable=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
