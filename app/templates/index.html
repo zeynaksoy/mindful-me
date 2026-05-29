@@ -95,6 +95,22 @@
                 background-position: -200% center;
             }
         }
+
+        /* Gizli Mod Stilleri */
+        body.private-mode-active canvas {
+            filter: blur(8px);
+            transition: filter 0.3s ease;
+        }
+        
+        body.private-mode-active .private-text {
+            filter: blur(5px);
+            user-select: none;
+            transition: filter 0.3s ease;
+        }
+        
+        body.private-mode-active .private-text:hover {
+            filter: blur(0px);
+        }
     </style>
 </head>
 
@@ -105,10 +121,15 @@
             <a class="navbar-brand fw-bold text-dark" href="{{ url_for('main.index') }}">🌿 Mindful-Me</a>
             <div class="ms-auto d-flex align-items-center gap-2">
                 <button class="btn btn-sm btn-glass me-1" id="darkModeToggle" title="{{ _('Gece Modu') }}">🌙</button>
+                <button class="btn btn-sm btn-glass me-1" id="privateModeToggle" title="{{ _('Gizli Mod') }}">👁️</button>
                 <div class="btn-group">
                     <a href="{{ url_for('main.set_language', language='tr') }}" class="btn btn-sm btn-glass">TR</a>
                     <a href="{{ url_for('main.set_language', language='en') }}" class="btn btn-sm btn-glass">EN</a>
                 </div>
+                <a href="{{ url_for('main.export_pdf') }}" class="btn btn-sm"
+                    style="background:rgba(231,76,60,0.12);border:1px solid rgba(231,76,60,0.3);border-radius:50px;color:#e74c3c;font-weight:600;margin-right:5px;">
+                    📄 {{ _('PDF İndir') }}
+                </a>
                 <a href="{{ url_for('main.api_entries') }}" target="_blank" class="btn btn-sm"
                     style="background:rgba(106,17,203,0.12);border:1px solid rgba(106,17,203,0.3);border-radius:50px;color:#6a11cb;font-weight:600;">
                     🔌 {{ _('API') }}
@@ -338,12 +359,12 @@
                                     </div>
                                 </div>
                                 {% if entry.mini_journal %}
-                                <p class="card-text text-dark mb-2"><strong>{{ _('Özet:') }}</strong> {{ entry.mini_journal }}</p>
+                                <p class="card-text text-dark mb-2 private-text"><strong>{{ _('Özet:') }}</strong> {{ entry.mini_journal }}</p>
                                 {% endif %}
                                 {% if entry.free_writing %}
-                                <p class="card-text text-dark" style="white-space: pre-wrap;"><strong>{{ _('Duygularım:') }}</strong> {{ entry.free_writing }}</p>
+                                <p class="card-text text-dark private-text" style="white-space: pre-wrap;"><strong>{{ _('Duygularım:') }}</strong> {{ entry.free_writing }}</p>
                                 {% elif entry.text %}
-                                <p class="card-text text-dark" style="white-space: pre-wrap;">{{ entry.text }}</p>
+                                <p class="card-text text-dark private-text" style="white-space: pre-wrap;">{{ entry.text }}</p>
                                 {% endif %}
 
                                 {% if entry.ai_sentiment %}
@@ -687,6 +708,26 @@
                     document.body.setAttribute('data-theme', 'dark');
                     localStorage.setItem('theme', 'dark');
                     toggleBtn.textContent = '☀️';
+                }
+            });
+        }
+
+        // Gizli Mod Toggle
+        const privateModeBtn = document.getElementById('privateModeToggle');
+        const isPrivate = localStorage.getItem('privateMode') === 'true';
+        if (isPrivate) {
+            document.body.classList.add('private-mode-active');
+            if(privateModeBtn) privateModeBtn.textContent = '🕶️';
+        }
+        if(privateModeBtn) {
+            privateModeBtn.addEventListener('click', () => {
+                document.body.classList.toggle('private-mode-active');
+                if (document.body.classList.contains('private-mode-active')) {
+                    localStorage.setItem('privateMode', 'true');
+                    privateModeBtn.textContent = '🕶️';
+                } else {
+                    localStorage.setItem('privateMode', 'false');
+                    privateModeBtn.textContent = '👁️';
                 }
             });
         }

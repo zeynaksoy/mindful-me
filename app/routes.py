@@ -691,3 +691,61 @@ def reset_password(token):
         flash(_('Şifreniz başarıyla güncellendi!'), 'success')
         return redirect(url_for('main.index'))
     return render_template('reset_password.html', form=form)
+
+import io
+from flask import send_file
+
+@main.route('/export_pdf')
+def export_pdf():
+    try:
+        from fpdf import FPDF
+    except ImportError:
+        flash(_('PDF oluşturma modülü (fpdf) yüklü değil.'), 'danger')
+        return redirect(url_for('main.index'))
+        
+    entries = MoodEntry.query.order_by(MoodEntry.timestamp.desc()).all()
+    
+    pdf = FPDF()
+    pdf.add_page()
+    
+    pdf.set_font('Helvetica', 'B', 16)
+    pdf.cell(0, 10, 'Mindful-Me Gunluk Kayitlari', ln=True, align='C')
+    pdf.ln(10)
+    
+    for e in entries:
+        date_str = e.timestamp.strftime('%Y-%m-%d %H:%M') if e.timestamp else 'Bilinmiyor'
+        pdf.set_font('Helvetica', 'B', 12)
+        pdf.cell(0, 10, f"Tarih: {date_str} - Ruh Hali: {e.mood.capitalize()}", ln=True)
+        
+        pdf.set_font('Helvetica', '', 11)
+        
+        def sanitize(text):
+            if not text: return ""
+            replacements = {'ı':'i', 'İ':'I', 'ğ':'g', 'Ğ':'G', 'ü':'u', 'Ü':'U', 'ş':'s', 'Ş':'S', 'ö':'o', 'Ö':'O', 'ç':'c', 'Ç':'C'}
+            for tr, en in replacements.items():
+                text = text.replace(tr, en)
+            return text.encode('latin-1', 'replace').decode('latin-1')
+
+        text = sanitize(e.text)
+        pdf.multi_cell(0, 8, f"Not: {text}")
+        
+        if e.mini_journal:
+            mj = sanitize(e.mini_journal)
+            pdf.multi_cell(0, 8, f"Ozet: {mj}")
+            
+        if e.free_writing:
+            fw = sanitize(e.free_writing)
+            pdf.multi_cell(0, 8, f"Duygular: {fw}")
+            
+        pdf.ln(5)
+        
+    pdf_bytes = pdf.output(dest='S')
+    if isinstance(pdf_bytes, str):
+        pdf_bytes = pdf_bytes.encode('latin-1')
+        
+    return send_file(
+        io.BytesIO(pdf_bytes),
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name='mindful-me-gunlukler.pdf'
+    )

@@ -39,12 +39,60 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
 
+def get_fernet():
+    key = current_app.config.get('ENCRYPTION_KEY')
+    if key:
+        try:
+            from cryptography.fernet import Fernet
+            return Fernet(key.encode('utf-8'))
+        except ImportError:
+            pass
+    return None
+
 class MoodEntry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     mood = db.Column(db.String(20), nullable=False)
     text = db.Column(db.Text, nullable=False)
-    mini_journal = db.Column(db.String(255), nullable=True)
-    free_writing = db.Column(db.Text, nullable=True)
+    
+    _mini_journal = db.Column('mini_journal', db.Text, nullable=True)
+    _free_writing = db.Column('free_writing', db.Text, nullable=True)
+
+    @property
+    def mini_journal(self):
+        f = get_fernet()
+        if self._mini_journal and f:
+            try:
+                return f.decrypt(self._mini_journal.encode('utf-8')).decode('utf-8')
+            except:
+                return self._mini_journal
+        return self._mini_journal
+
+    @mini_journal.setter
+    def mini_journal(self, value):
+        f = get_fernet()
+        if value and f:
+            self._mini_journal = f.encrypt(value.encode('utf-8')).decode('utf-8')
+        else:
+            self._mini_journal = value
+
+    @property
+    def free_writing(self):
+        f = get_fernet()
+        if self._free_writing and f:
+            try:
+                return f.decrypt(self._free_writing.encode('utf-8')).decode('utf-8')
+            except:
+                return self._free_writing
+        return self._free_writing
+
+    @free_writing.setter
+    def free_writing(self, value):
+        f = get_fernet()
+        if value and f:
+            self._free_writing = f.encrypt(value.encode('utf-8')).decode('utf-8')
+        else:
+            self._free_writing = value
+
     timestamp = db.Column(db.DateTime, index=True, default=db.func.now())
     ai_analysis = db.Column(db.String(255), nullable=True)
     ai_advice = db.Column(db.Text, nullable=True)
