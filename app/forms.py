@@ -19,10 +19,21 @@ class MoodEntryForm(FlaskForm):
     submit = SubmitField(_l('Kaydet'))
 
 class ProfileForm(FlaskForm):
+    username = StringField(_l('Ad Soyad / Kullanıcı Adı'), validators=[DataRequired()])
+    email = StringField(_l('E-posta'), validators=[DataRequired(), Email()])
     avatar = FileField(_l('Avatar Yükle'), validators=[
         FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], _l('Sadece resim dosyaları yüklenebilir!'))
     ])
     submit = SubmitField(_l('Profili Güncelle'))
+
+class ChangePasswordForm(FlaskForm):
+    old_password = PasswordField(_l('Mevcut Şifre'), validators=[DataRequired()])
+    new_password = PasswordField(_l('Yeni Şifre'), validators=[DataRequired()])
+    confirm_password = PasswordField(_l('Yeni Şifre (Tekrar)'), validators=[
+        DataRequired(),
+        EqualTo('new_password', message=_l('Şifreler eşleşmiyor.'))
+    ])
+    submit = SubmitField(_l('Şifreyi Değiştir'))
 
 class ForgotPasswordForm(FlaskForm):
     email = StringField(_l('E-posta'), validators=[DataRequired(), Email(message=_l('Geçerli bir e-posta adresi giriniz.'))])

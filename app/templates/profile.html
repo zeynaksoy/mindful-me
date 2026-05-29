@@ -180,6 +180,17 @@
                     <form method="POST" enctype="multipart/form-data" id="profileForm">
                         {{ form.hidden_tag() }}
 
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                {{ form.username.label(class_="form-label fw-semibold text-muted small mb-1") }}
+                                {{ form.username(class_="form-control bg-light border-0", style="border-radius:12px; padding:0.8rem;") }}
+                            </div>
+                            <div class="col-md-6 mt-3 mt-md-0">
+                                {{ form.email.label(class_="form-label fw-semibold text-muted small mb-1") }}
+                                {{ form.email(class_="form-control bg-light border-0", style="border-radius:12px; padding:0.8rem;") }}
+                            </div>
+                        </div>
+
                         <label for="avatarInput" class="upload-zone w-100 mb-3">
                             <div class="fs-2 mb-2">🖼️</div>
                             <p class="fw-semibold mb-1">{{ _('Avatar yüklemek için tıkla veya sürükle') }}</p>
@@ -199,12 +210,19 @@
                         <div class="text-danger small mb-2">⚠️ {{ error }}</div>
                         {% endfor %}
 
-                        <div class="d-grid">
-                            {{ form.submit(class_="btn btn-glass btn-lg") }}
+                        <div class="d-flex flex-column flex-md-row gap-3 mt-4">
+                            {{ form.submit(class_="btn btn-glass flex-grow-1 py-2") }}
+                            <a href="{{ url_for('main.change_password') }}" class="btn flex-grow-1 py-2 fw-bold" style="background: rgba(255,107,129,0.1); border: 1px solid rgba(255,107,129,0.3); color: #ff4757; border-radius: 50px; transition: all 0.3s;">
+                                🔒 {{ _('Şifre Değiştir') }}
+                            </a>
                         </div>
                     </form>
-                </d        <!-- İstatistikler -->
-        <div class="glass-card">
+                </div>
+            </div>
+        </div>
+
+        <!-- İstatistikler -->
+        <div class="glass-card mt-5">
             <h5 class="fw-bold mb-4">📊 {{ _('Kişisel İstatistiklerim') }}</h5>
             <div class="row g-3">
                 <div class="col-6 col-md-3">

@@ -3,7 +3,7 @@ import os
 from datetime import datetime, timedelta
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, session, current_app
 from werkzeug.utils import secure_filename
-from app.forms import MoodEntryForm, ProfileForm, ForgotPasswordForm, ResetPasswordForm
+from app.forms import MoodEntryForm, ProfileForm, ForgotPasswordForm, ResetPasswordForm, ChangePasswordForm
 from app.models import MoodEntry, User
 from app import db, mail
 from flask_mail import Message
@@ -289,6 +289,8 @@ def profile():
 
     form = ProfileForm()
     if form.validate_on_submit():
+        user.username = form.username.data
+        user.email = form.email.data
         file = form.avatar.data
         if file:
             filename  = secure_filename(file.filename)
@@ -298,9 +300,12 @@ def profile():
             os.makedirs(AVATARS_DIR, exist_ok=True)
             file.save(os.path.join(AVATARS_DIR, save_name))
             user.avatar_file = save_name
-            db.session.commit()
-            flash(_('Avatar başarıyla güncellendi! 🎉'), 'success')
+        db.session.commit()
+        flash(_('Profil başarıyla güncellendi! 🎉'), 'success')
         return redirect(url_for('main.profile'))
+    elif request.method == 'GET':
+        form.username.data = user.username
+        form.email.data = user.email
 
     # İstatistikler
     total_entries  = MoodEntry.query.count()
@@ -315,6 +320,23 @@ def profile():
     return render_template('profile.html', user=user, form=form,
                            total_entries=total_entries, mood_counts=mood_counts,
                            best_mood=best_mood, avatar_url=avatar_url)
+
+@main.route('/change_password', methods=['GET', 'POST'])
+def change_password():
+    user = User.query.first()
+    if not user:
+        return redirect(url_for('main.index'))
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        # Check if password_hash is set (default user might not have one)
+        if not user.password_hash or user.check_password(form.old_password.data):
+            user.set_password(form.new_password.data)
+            db.session.commit()
+            flash(_('Şifreniz başarıyla değiştirildi!'), 'success')
+            return redirect(url_for('main.profile'))
+        else:
+            flash(_('Mevcut şifreniz yanlış.'), 'danger')
+    return render_template('change_password.html', form=form)
 
 @main.route('/set_language/<language>')
 def set_language(language):
