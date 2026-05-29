@@ -208,13 +208,16 @@
                             {{ form.text(class_="form-control", rows="3", placeholder=_("İçinden geçenleri dök... (İsteğe bağlı)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px;") }}
                         </div>
                         <div class="row mb-4">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 {{ form.sleep_hours(class_="form-control", placeholder=_("Uyku (Saat)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 {{ form.stress_level(class_="form-control", placeholder=_("Stres (1-10)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
+                                {{ form.activity_type(class_="form-select", style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
+                            </div>
+                            <div class="col-md-3">
                                 {{ form.activities(class_="form-control", placeholder=_("Aktivite (örn: spor)"), style="background: rgba(255,255,255,0.7); border:none; border-radius:15px; font-size:0.9rem;") }}
                             </div>
                         </div>

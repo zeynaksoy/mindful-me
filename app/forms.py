@@ -18,6 +18,17 @@ class MoodEntryForm(FlaskForm):
     stress_level = IntegerField(_l('Stres Seviyesi (1-10)'), validators=[Optional(), NumberRange(min=1, max=10)])
     activities = StringField(_l('Aktiviteler (virgülle ayırın)'), validators=[Optional()])
     
+    activity_type = SelectField(_l('Aktivite Türü'), choices=[
+        ('', _l('Belirtilmedi')), 
+        ('Spor', _l('Spor 🏃‍♂️')), 
+        ('Sosyal', _l('Sosyal 👥')), 
+        ('Ders/İş', _l('Ders/İş 💻')), 
+        ('Oyun', _l('Oyun 🎮')), 
+        ('Meditasyon', _l('Meditasyon 🧘‍♀️')), 
+        ('Müzik', _l('Müzik 🎵')), 
+        ('Doğa Yürüyüşü', _l('Doğa Yürüyüşü 🌲'))
+    ], validators=[Optional()])
+    
     # Uyku ve Alışkanlıklar
     bedtime = TimeField(_l('Uykuya Dalış Saati'), validators=[Optional()])
     wakeup_time = TimeField(_l('Uyanış Saati'), validators=[Optional()])

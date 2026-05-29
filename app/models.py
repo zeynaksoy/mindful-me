@@ -63,6 +63,8 @@ class MoodEntry(db.Model):
     social_interaction_score = db.Column(db.Integer, nullable=True) # 1-5
     weather_condition = db.Column(db.String(50), nullable=True)
     notes = db.Column(db.Text, nullable=True)
+    
+    activity_type = db.Column(db.String(50), nullable=True)
 
     def to_dict(self):
         return {

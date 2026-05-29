@@ -27,6 +27,17 @@ def create_app():
     with app.app_context():
         from app import models
         db.create_all()
+        
+        # Sadece debug (geliştirme) modunda otomatik migration ve upgrade
+        if app.config.get('DEBUG') or app.debug:
+            try:
+                from flask_migrate import upgrade, migrate as db_migrate
+                db_migrate(message="Auto-migration on startup")
+                upgrade()
+                print("✅ Veritabanı şeması otomatik olarak kontrol edildi ve güncellendi.")
+            except Exception as e:
+                print("⚠️ Otomatik migration sırasında bir bilgi/hata (Zaten güncel olabilir):", e)
+
     from app.routes import main
     app.register_blueprint(main)
     

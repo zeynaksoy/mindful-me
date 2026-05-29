@@ -187,6 +187,36 @@ def get_lifestyle_feedback():
             return _("Son 3 gündür ekran süren arttığı için uyku kaliten %% %(pct)d düşmüş. Bugün ekranı 2 saat erken kapatmaya ne dersin?", pct=int(decrease_percent))
     return None
 
+def get_best_feeling_activities(entries):
+    activity_scores = {}
+    activity_counts = {}
+    for e in entries:
+        if getattr(e, 'activity_type', None):
+            score = MOOD_VALUES.get(e.mood, 3)
+            act = e.activity_type
+            activity_scores[act] = activity_scores.get(act, 0) + score
+            activity_counts[act] = activity_counts.get(act, 0) + 1
+            
+    averages = {}
+    for act, total_score in activity_scores.items():
+        averages[act] = total_score / activity_counts[act]
+        
+    sorted_acts = sorted(averages.items(), key=lambda item: item[1], reverse=True)
+    
+    top_3 = []
+    emojis = {
+        'Spor': '🏃‍♂️', 'Sosyal': '👥', 'Ders/İş': '💻', 
+        'Oyun': '🎮', 'Meditasyon': '🧘‍♀️', 'Müzik': '🎵', 
+        'Doğa Yürüyüşü': '🌲'
+    }
+    for act, avg in sorted_acts[:3]:
+        top_3.append({
+            'name': act,
+            'icon': emojis.get(act, '⭐'),
+            'score': round(avg, 1)
+        })
+    return top_3
+
 def calculate_lifestyle_insights(entries):
     insights = []
     if not entries:
@@ -305,6 +335,7 @@ def index():
             sleep_hours=form.sleep_hours.data,
             stress_level=form.stress_level.data,
             activities=form.activities.data,
+            activity_type=form.activity_type.data,
             ai_analysis=analysis,
             ai_advice=advice,
             ai_sentiment=sentiment,
@@ -547,11 +578,13 @@ def profile():
         badges.append({'name': _('Uyku Ustası'), 'icon': '💤', 'desc': _('3 Gün Üst Üste 8+ Saat Uyku'), 'earned': False})
         
     insights = calculate_lifestyle_insights(all_entries)
+    top_activities = get_best_feeling_activities(all_entries)
 
     return render_template('profile.html', user=user, form=form,
                            total_entries=total_entries, mood_counts=mood_counts,
                            best_mood=best_mood, avatar_url=avatar_url, badges=badges,
-                           insights=insights, smart_coach_feedback=smart_coach_feedback)
+                           insights=insights, smart_coach_feedback=smart_coach_feedback,
+                           top_activities=top_activities)
 
 @main.route('/change_password', methods=['GET', 'POST'])
 def change_password():
