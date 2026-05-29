@@ -167,20 +167,25 @@ def index():
         db.session.add(entry)
         
         # Streak (Seri) Hesaplama
-        user = User.query.first()
-        if user:
-            today = datetime.utcnow().date()
-            if user.last_entry_date:
-                diff = (today - user.last_entry_date).days
-                if diff == 1:
-                    user.streak_count += 1
-                elif diff > 1:
+        try:
+            user = User.query.first()
+            if user:
+                today = datetime.utcnow().date()
+                last_date = getattr(user, 'last_entry_date', None)
+                current_streak = getattr(user, 'streak_count', 0) or 0
+                
+                if last_date:
+                    diff = (today - last_date).days
+                    if diff == 1:
+                        user.streak_count = current_streak + 1
+                    elif diff > 1:
+                        user.streak_count = 1
+                else:
                     user.streak_count = 1
-            else:
-                user.streak_count = 1
-            user.last_entry_date = today
-
-        db.session.commit()
+                user.last_entry_date = today
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
         return redirect(url_for('main.index'))
     
     search_query = request.args.get('search', '')
@@ -344,11 +349,12 @@ def profile():
 
         # Rozet Mantığı
         badges = []
-        if user.streak_count >= 3:
+        streak = getattr(user, 'streak_count', 0) or 0
+        if streak >= 3:
             badges.append({'name': _('Başlangıç'), 'icon': '🌱', 'desc': _('3 Günlük Seri')})
-        if user.streak_count >= 7:
+        if streak >= 7:
             badges.append({'name': _('İstikrarlı'), 'icon': '🔥', 'desc': _('7 Günlük Seri')})
-        if user.streak_count >= 30:
+        if streak >= 30:
             badges.append({'name': _('Zen Ustası'), 'icon': '👑', 'desc': _('30 Günlük Seri')})
 
         return render_template('profile.html', user=user, form=form,
