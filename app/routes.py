@@ -9,6 +9,7 @@ from app import db, mail
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer
 from flask_babel import gettext as _, lazy_gettext as _l
+from app.email import send_password_reset_email
 
 main = Blueprint('main', __name__)
 
