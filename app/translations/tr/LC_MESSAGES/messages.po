@@ -1,0 +1,325 @@
+# Turkish translations for Mindful-Me.
+# Copyright (C) 2026 zeynaksoy/mindful-me
+# This file is distributed under the same license as the Mindful-Me project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Mindful-Me 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-29 10:52+0300\n"
+"PO-Revision-Date: 2026-05-29 10:52+0300\n"
+"Last-Translator: Antigravity\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Antigravity\n"
+
+msgid "Zihinsel Farkındalık"
+msgstr "Zihinsel Farkındalık"
+
+msgid "API"
+msgstr "API"
+
+msgid "Profilim"
+msgstr "Profilim"
+
+msgid "Küçük Bir Mola"
+msgstr "Küçük Bir Mola"
+
+msgid "Şu An Nasılsın?"
+msgstr "Şu An Nasılsın?"
+
+msgid "Üzgün"
+msgstr "Üzgün"
+
+msgid "Stresli"
+msgstr "Stresli"
+
+msgid "Sakin"
+msgstr "Sakin"
+
+msgid "Mutlu"
+msgstr "Mutlu"
+
+msgid "Heyecanlı"
+msgstr "Heyecanlı"
+
+msgid "İçinden geçenleri dök... (İsteğe bağlı)"
+msgstr "İçinden geçenleri dök... (İsteğe bağlı)"
+
+msgid "Uyku (Saat)"
+msgstr "Uyku (Saat)"
+
+msgid "Stres (1-10)"
+msgstr "Stres (1-10)"
+
+msgid "Aktivite (örn: spor)"
+msgstr "Aktivite (örn: spor)"
+
+msgid "Duygumu Kaydet 🕊️"
+msgstr "Duygumu Kaydet 🕊️"
+
+msgid "Duygu Haritası (Son 7 Gün)"
+msgstr "Duygu Haritası (Son 7 Gün)"
+
+msgid "Akıllı İstatistik Sistemi"
+msgstr "Akıllı İstatistik Sistemi"
+
+msgid "Aktivite - Mutluluk Korelasyonu"
+msgstr "Aktivite - Mutluluk Korelasyonu"
+
+msgid "Haftalık Kayıt Yoğunluğu"
+msgstr "Haftalık Kayıt Yoğunluğu"
+
+msgid "Mood Takvimi (Son 30 Gün)"
+msgstr "Mood Takvimi (Son 30 Gün)"
+
+msgid "Geçmişin İzleri"
+msgstr "Geçmişin İzleri"
+
+msgid "Günlüklerde ara..."
+msgstr "Günlüklerde ara..."
+
+msgid "En Yeni"
+msgstr "En Yeni"
+
+msgid "En Eski"
+msgstr "En Eski"
+
+msgid "Ara"
+msgstr "Ara"
+
+msgid "Bu kaydı silmek istediğinden emin misin?"
+msgstr "Bu kaydı silmek istediğinden emin misin?"
+
+msgid "AI İçgörü Kartı"
+msgstr "AI İçgörü Kartı"
+
+msgid "Duygu Durumu"
+msgstr "Duygu Durumu"
+
+msgid "Pozitif Skor"
+msgstr "Pozitif Skor"
+
+msgid "Anahtar Kelimeler"
+msgstr "Anahtar Kelimeler"
+
+msgid "Tavsiye:"
+msgstr "Tavsiye:"
+
+msgid "Henüz bir izin yok. İlk adımını şimdi at."
+msgstr "Henüz bir izin yok. İlk adımını şimdi at."
+
+msgid "← Ana Sayfa"
+msgstr "← Ana Sayfa"
+
+msgid "Profil Ayarları"
+msgstr "Profil Ayarları"
+
+msgid "Avatar yüklemek için tıkla veya sürükle"
+msgstr "Avatar yüklemek için tıkla veya sürükle"
+
+msgid "PNG, JPG, GIF, WEBP · Maks. 5 MB"
+msgstr "PNG, JPG, GIF, WEBP · Maks. 5 MB"
+
+msgid "Önizleme"
+msgstr "Önizleme"
+
+msgid "Önizleme – Kaydetmek için butona bas"
+msgstr "Önizleme – Kaydetmek için butona bas"
+
+msgid "Kişisel İstatistiklerim"
+msgstr "Kişisel İstatistiklerim"
+
+msgid "Toplam Kayıt"
+msgstr "Toplam Kayıt"
+
+msgid "En sık hissettiğin duygu:"
+msgstr "En sık hissettiğin duygu:"
+
+msgid "API Referansı"
+msgstr "API Referansı"
+
+msgid "Tüm kayıtları JSON olarak döndürür."
+msgstr "Tüm kayıtları JSON olarak döndürür."
+
+msgid "Opsiyonel parametreler:"
+msgstr "Opsiyonel parametreler:"
+
+msgid "Tüm Kayıtlar →"
+msgstr "Tüm Kayıtlar →"
+
+msgid "Son 5 Kayıt →"
+msgstr "Son 5 Kayıt →"
+
+msgid "Mutlu Kayıtlar →"
+msgstr "Mutlu Kayıtlar →"
+
+msgid "Bugün nasıl hissediyorsun?"
+msgstr "Bugün nasıl hissediyorsun?"
+
+msgid "Mutlu 😄"
+msgstr "Mutlu 😄"
+
+msgid "Sakin 😌"
+msgstr "Sakin 😌"
+
+msgid "Stresli 😰"
+msgstr "Stresli 😰"
+
+msgid "Üzgün 😢"
+msgstr "Üzgün 😢"
+
+msgid "Heyecanlı 🤩"
+msgstr "Heyecanlı 🤩"
+
+msgid "Neler düşünüyorsun?"
+msgstr "Neler düşünüyorsun?"
+
+msgid "Uyku Süresi (Saat)"
+msgstr "Uyku Süresi (Saat)"
+
+msgid "Stres Seviyesi (1-10)"
+msgstr "Stres Seviyesi (1-10)"
+
+msgid "Aktiviteler (virgülle ayırın)"
+msgstr "Aktiviteler (virgülle ayırın)"
+
+msgid "Kaydet"
+msgstr "Kaydet"
+
+msgid "Avatar Yükle"
+msgstr "Avatar Yükle"
+
+msgid "Sadece resim dosyaları yüklenebilir!"
+msgstr "Sadece resim dosyaları yüklenebilir!"
+
+msgid "Profili Güncelle"
+msgstr "Profili Güncelle"
+
+msgid "E-posta"
+msgstr "E-posta"
+
+msgid "Geçerli bir e-posta adresi giriniz."
+msgstr "Geçerli bir e-posta adresi giriniz."
+
+msgid "Şifre Sıfırlama Linki Gönder"
+msgstr "Şifre Sıfırlama Linki Gönder"
+
+msgid "Yeni Şifre"
+msgstr "Yeni Şifre"
+
+msgid "Şifre Tekrar"
+msgstr "Şifre Tekrar"
+
+msgid "Şifreler eşleşmiyor."
+msgstr "Şifreler eşleşmiyor."
+
+msgid "Şifreyi Sıfırla"
+msgstr "Şifreyi Sıfırla"
+
+msgid "Harika bir enerji! Bu enerjiyi yaratıcı bir hobiye veya spora yönlendirmeyi dene."
+msgstr "Harika bir enerji! Bu enerjiyi yaratıcı bir hobiye veya spora yönlendirmeyi dene."
+
+msgid "Bu anı bir kutlama ile taçlandır! Kendine sevdiğin bir içecek ısmarla veya en sevdiğin şarkıyı dinle."
+msgstr "Bu anı bir kutlama ile taçlandır! Kendine sevdiğin bir içecek ısmarla veya en sevdiğin şarkıyı dinle."
+
+msgid "Bu huzurlu anın tadını çıkar. Birkaç sayfa kitap okumak veya kısa bir yürüyüş için harika bir zaman."
+msgstr "Bu huzurlu anın tadını çıkar. Birkaç sayfa kitap okumak veya kısa bir yürüyüş için harika bir zaman."
+
+msgid "Derin bir nefes al... Omuzlarını serbest bırak. Gözlerini kapatıp 2 dakika sadece durmayı dene."
+msgstr "Derin bir nefes al... Omuzlarını serbest bırak. Gözlerini kapatıp 2 dakika sadece durmayı dene."
+
+msgid "Bir bardak su iç ve kendine sarıl. Duygularını hissetmek tamamen normal, geçici olduklarını unutma."
+msgstr "Bir bardak su iç ve kendine sarıl. Duygularını hissetmek tamamen normal, geçici olduklarını unutma."
+
+msgid "Nötr"
+msgstr "Nötr"
+
+msgid "%(mood)s bir ruh hali içindesin."
+msgstr "%(mood)s bir ruh hali içindesin."
+
+msgid "Daha fazla detay yazarsan sana özel yapay zeka tavsiyeleri verebilirim."
+msgstr "Daha fazla detay yazarsan sana özel yapay zeka tavsiyeleri verebilirim."
+
+msgid "Negatif"
+msgstr "Negatif"
+
+msgid "Yazdıklarında belirgin bir yoğunluk seziyorum."
+msgstr "Yazdıklarında belirgin bir yoğunluk seziyorum."
+
+msgid "Belki de şu an kendine biraz daha şefkat göstermelisin. 5 dakikalık bir nefes egzersizi iyi gelebilir."
+msgstr "Belki de şu an kendine biraz daha şefkat göstermelisin. 5 dakikalık bir nefes egzersizi iyi gelebilir."
+
+msgid "Pozitif"
+msgstr "Pozitif"
+
+msgid "Harika! Bu pozitif anın tadını çıkardığın yazdıklarından belli."
+msgstr "Harika! Bu pozitif anın tadını çıkardığın yazdıklarından belli."
+
+msgid "Bu enerjiyi çevrendekilerle paylaşabilir veya bu anın neden güzel olduğunu not edebilirsin."
+msgstr "Bu enerjiyi çevrendekilerle paylaşabilir veya bu anın neden güzel olduğunu not edebilirsin."
+
+msgid "Dengeli ve merkezinde görünüyorsun."
+msgstr "Dengeli ve merkezinde görünüyorsun."
+
+msgid "Günün geri kalanında bu dengeyi korumak için kısa bir yürüyüş yapabilirsin."
+msgstr "Günün geri kalanında bu dengeyi korumak için kısa bir yürüyüş yapabilirsin."
+
+msgid "Yeterli veri yok. Analiz için daha fazla günlük girmelisin."
+msgstr "Yeterli veri yok. Analiz için daha fazla günlük girmelisin."
+
+msgid "'%(act)s' yaptığın günlerde mutluluk ortalaman %(diff)s daha yüksek."
+msgstr "'%(act)s' yaptığın günlerde mutluluk ortalaman %(diff)s daha yüksek."
+
+msgid "7 saat ve üzeri uyuduğunda kendini daha pozitif hissediyorsun."
+msgstr "7 saat ve üzeri uyuduğunda kendini daha pozitif hissediyorsun."
+
+msgid "Bazı günlerde stres seviyen yüksek çıkmış, nefes egzersizlerini artırabilirsin."
+msgstr "Bazı günlerde stres seviyen yüksek çıkmış, nefes egzersizlerini artırabilirsin."
+
+msgid "Henüz belirgin bir korelasyon bulamadım, günlüğünü doldurmaya devam et!"
+msgstr "Henüz belirgin bir korelasyon bulamadım, günlüğünü doldurmaya devam et!"
+
+msgid "Bugün kendine iyi davranmayı unutma."
+msgstr "Bugün kendine iyi davranmayı unutma."
+
+msgid "Mindful Kullanıcı"
+msgstr "Mindful Kullanıcı"
+
+msgid "Avatar başarıyla güncellendi! 🎉"
+msgstr "Avatar başarıyla güncellendi! 🎉"
+
+msgid "Şifre Sıfırlama İsteği - Mindful-Me"
+msgstr "Şifre Sıfırlama İsteği - Mindful-Me"
+
+msgid "Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayın:\n%(url)s\n\nEğer bu isteği siz yapmadıysanız bu e-postayı görmezden gelebilirsiniz."
+msgstr "Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayın:\n%(url)s\n\nEğer bu isteği siz yapmadıysanız bu e-postayı görmezden gelebilirsiniz."
+
+msgid "Şifre sıfırlama talimatları e-posta adresinize gönderildi."
+msgstr "Şifre sıfırlama talimatları e-posta adresinize gönderildi."
+
+msgid "Geçersiz veya süresi dolmuş bir link."
+msgstr "Geçersiz veya süresi dolmuş bir link."
+
+msgid "Şifreniz başarıyla güncellendi!"
+msgstr "Şifreniz başarıyla güncellendi!"
+
+msgid "Sayfa Bulunamadı"
+msgstr "Sayfa Bulunamadı"
+
+msgid "Yolunu Kaybetmiş Gibisin"
+msgstr "Yolunu Kaybetmiş Gibisin"
+
+msgid "Aradığın sayfa göç etmiş veya hiç var olmamış olabilir. Derin bir nefes al ve yuvana geri dön."
+msgstr "Aradığın sayfa göç etmiş veya hiç var olmamış olabilir. Derin bir nefes al ve yuvana geri dön."
+
+msgid "Sunucu Hatası"
+msgstr "Sunucu Hatası"
+
+msgid "Zihinde Küçük Bir Fırtına"
+msgstr "Zihinde Küçük Bir Fırtına"
+
+msgid "Sunucumuz şu an yoğun bir düşünce dalgası içinde. Bu durum geçicidir, o yüzden lütfen derin bir nefes alın ve biraz sonra tekrar deneyin."
+msgstr "Sunucumuz şu an yoğun bir düşünce dalgası içinde. Bu durum geçicidir, o yüzden lütfen derin bir nefes alın ve biraz sonra tekrar deneyin."

@@ -8,6 +8,7 @@ from app.models import MoodEntry, User
 from app import db, mail
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer
+from flask_babel import gettext as _, lazy_gettext as _l
 
 main = Blueprint('main', __name__)
 
@@ -20,11 +21,11 @@ MOOD_VALUES = {
 }
 
 SUGGESTIONS = {
-    'heyecanli': 'Harika bir enerji! Bu enerjiyi yaratıcı bir hobiye veya spora yönlendirmeyi dene.',
-    'mutlu': 'Bu anı bir kutlama ile taçlandır! Kendine sevdiğin bir içecek ısmarla veya en sevdiğin şarkıyı dinle.',
-    'sakin': 'Bu huzurlu anın tadını çıkar. Birkaç sayfa kitap okumak veya kısa bir yürüyüş için harika bir zaman.',
-    'stresli': 'Derin bir nefes al... Omuzlarını serbest bırak. Gözlerini kapatıp 2 dakika sadece durmayı dene.',
-    'uzgun': 'Bir bardak su iç ve kendine sarıl. Duygularını hissetmek tamamen normal, geçici olduklarını unutma.'
+    'heyecanli': _l('Harika bir enerji! Bu enerjiyi yaratıcı bir hobiye veya spora yönlendirmeyi dene.'),
+    'mutlu': _l('Bu anı bir kutlama ile taçlandır! Kendine sevdiğin bir içecek ısmarla veya en sevdiğin şarkıyı dinle.'),
+    'sakin': _l('Bu huzurlu anın tadını çıkar. Birkaç sayfa kitap okumak veya kısa bir yürüyüş için harika bir zaman.'),
+    'stresli': _l('Derin bir nefes al... Omuzlarını serbest bırak. Gözlerini kapatıp 2 dakika sadece durmayı dene.'),
+    'uzgun': _l('Bir bardak su iç ve kendine sarıl. Duygularını hissetmek tamamen normal, geçici olduklarını unutma.')
 }
 
 def analyze_journal_entry(mood, text):
@@ -34,32 +35,33 @@ def analyze_journal_entry(mood, text):
     keywords = ", ".join(keywords_list) if keywords_list else mood
     
     if not text or len(text.strip()) < 5:
-        sentiment = "Nötr"
+        sentiment = _("Nötr")
         score = 5
-        analysis = f"{mood.capitalize()} bir ruh hali içindesin."
-        advice = "Daha fazla detay yazarsan sana özel yapay zeka tavsiyeleri verebilirim."
+        translated_mood = _(mood.capitalize())
+        analysis = _("%(mood)s bir ruh hali içindesin.", mood=translated_mood)
+        advice = _("Daha fazla detay yazarsan sana özel yapay zeka tavsiyeleri verebilirim.")
     else:
         if mood in ['uzgun', 'stresli']:
-            sentiment = "Negatif"
+            sentiment = _("Negatif")
             score = 3 if mood == 'uzgun' else 4
-            analysis = "Yazdıklarında belirgin bir yoğunluk seziyorum."
-            advice = "Belki de şu an kendine biraz daha şefkat göstermelisin. 5 dakikalık bir nefes egzersizi iyi gelebilir."
+            analysis = _("Yazdıklarında belirgin bir yoğunluk seziyorum.")
+            advice = _("Belki de şu an kendine biraz daha şefkat göstermelisin. 5 dakikalık bir nefes egzersizi iyi gelebilir.")
         elif mood in ['mutlu', 'heyecanli']:
-            sentiment = "Pozitif"
+            sentiment = _("Pozitif")
             score = 9 if mood == 'mutlu' else 8
-            analysis = "Harika! Bu pozitif anın tadını çıkardığın yazdıklarından belli."
-            advice = "Bu enerjiyi çevrendekilerle paylaşabilir veya bu anın neden güzel olduğunu not edebilirsin."
+            analysis = _("Harika! Bu pozitif anın tadını çıkardığın yazdıklarından belli.")
+            advice = _("Bu enerjiyi çevrendekilerle paylaşabilir veya bu anın neden güzel olduğunu not edebilirsin.")
         else:
-            sentiment = "Nötr"
+            sentiment = _("Nötr")
             score = 6
-            analysis = "Dengeli ve merkezinde görünüyorsun."
-            advice = "Günün geri kalanında bu dengeyi korumak için kısa bir yürüyüş yapabilirsin."
+            analysis = _("Dengeli ve merkezinde görünüyorsun.")
+            advice = _("Günün geri kalanında bu dengeyi korumak için kısa bir yürüyüş yapabilirsin.")
             
     return sentiment, score, keywords, analysis, advice
 
 def analyze_data(entries):
     if not entries:
-        return "Yeterli veri yok. Analiz için daha fazla günlük girmelisin."
+        return _("Yeterli veri yok. Analiz için daha fazla günlük girmelisin.")
     
     activity_moods = {}
     total_moods = []
@@ -89,7 +91,7 @@ def analyze_data(entries):
                 best_act = act
                 
     if best_act and best_diff > 0:
-        insights.append(f"'{best_act.title()}' yaptığın günlerde mutluluk ortalaman %{int(best_diff)} daha yüksek.")
+        insights.append(_("'%(act)s' yaptığın günlerde mutluluk ortalaman %(diff)s daha yüksek.", act=best_act.title(), diff=f"%{int(best_diff)}"))
         
     high_sleep_moods = [MOOD_VALUES.get(e.mood, 3) for e in entries if e.sleep_hours and e.sleep_hours >= 7]
     low_sleep_moods = [MOOD_VALUES.get(e.mood, 3) for e in entries if e.sleep_hours and e.sleep_hours < 7]
@@ -98,14 +100,14 @@ def analyze_data(entries):
         avg_high = sum(high_sleep_moods) / len(high_sleep_moods)
         avg_low = sum(low_sleep_moods) / len(low_sleep_moods)
         if avg_high > avg_low:
-            insights.append("7 saat ve üzeri uyuduğunda kendini daha pozitif hissediyorsun.")
+            insights.append(_("7 saat ve üzeri uyuduğunda kendini daha pozitif hissediyorsun."))
             
     high_stress = [e for e in entries if e.stress_level and e.stress_level >= 7]
     if high_stress:
-        insights.append("Bazı günlerde stres seviyen yüksek çıkmış, nefes egzersizlerini artırabilirsin.")
+        insights.append(_("Bazı günlerde stres seviyen yüksek çıkmış, nefes egzersizlerini artırabilirsin."))
         
     if not insights:
-        return "Henüz belirgin bir korelasyon bulamadım, günlüğünü doldurmaya devam et!"
+        return _("Henüz belirgin bir korelasyon bulamadım, günlüğünü doldurmaya devam et!")
         
     return " ".join(insights)
 
@@ -175,7 +177,7 @@ def index():
     # Strategy 2: Görev Motoru (Son kayda göre dinamik öneri)
     current_suggestion = None
     if entries:
-        current_suggestion = SUGGESTIONS.get(entries[0].mood, "Bugün kendine iyi davranmayı unutma.")
+        current_suggestion = SUGGESTIONS.get(entries[0].mood, _("Bugün kendine iyi davranmayı unutma."))
 
     # Strategy 1: Duygu Haritası Grafiği Verisi (Son 7 Gün)
     seven_days_ago = datetime.utcnow() - timedelta(days=7)
@@ -281,7 +283,7 @@ def profile():
     # Varsayılan kullanıcıyı al ya da oluştur
     user = User.query.first()
     if not user:
-        user = User(username='Mindful Kullanıcı', email='user@mindful.me', avatar_file='default.png')
+        user = User(username=_('Mindful Kullanıcı'), email='user@mindful.me', avatar_file='default.png')
         db.session.add(user)
         db.session.commit()
 
@@ -297,7 +299,7 @@ def profile():
             file.save(os.path.join(AVATARS_DIR, save_name))
             user.avatar_file = save_name
             db.session.commit()
-            flash('Avatar başarıyla güncellendi! 🎉', 'success')
+            flash(_('Avatar başarıyla güncellendi! 🎉'), 'success')
         return redirect(url_for('main.profile'))
 
     # İstatistikler
@@ -334,14 +336,14 @@ def verify_reset_token(token, expires_sec=1800):
 
 def send_reset_email(user):
     token = get_reset_token(user)
-    msg = Message('Şifre Sıfırlama İsteği - Mindful-Me',
+    msg = Message(_('Şifre Sıfırlama İsteği - Mindful-Me'),
                   sender=current_app.config['MAIL_DEFAULT_SENDER'],
                   recipients=[user.email])
-    msg.body = f'''Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayın:
-{url_for('main.reset_password', token=token, _external=True)}
+    msg.body = _('''Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayın:
+%(url)s
 
 Eğer bu isteği siz yapmadıysanız bu e-postayı görmezden gelebilirsiniz.
-'''
+''', url=url_for('main.reset_password', token=token, _external=True))
     mail.send(msg)
 
 @main.route('/reset_password_request', methods=['GET', 'POST'])
@@ -351,7 +353,7 @@ def reset_password_request():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_reset_email(user)
-        flash('Şifre sıfırlama talimatları e-posta adresinize gönderildi.', 'info')
+        flash(_('Şifre sıfırlama talimatları e-posta adresinize gönderildi.'), 'info')
         return redirect(url_for('main.index'))
     return render_template('reset_password_request.html', form=form)
 
@@ -359,12 +361,12 @@ def reset_password_request():
 def reset_password(token):
     user = verify_reset_token(token)
     if not user:
-        flash('Geçersiz veya süresi dolmuş bir link.', 'warning')
+        flash(_('Geçersiz veya süresi dolmuş bir link.'), 'warning')
         return redirect(url_for('main.index'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Şifreniz başarıyla güncellendi!', 'success')
+        flash(_('Şifreniz başarıyla güncellendi!'), 'success')
         return redirect(url_for('main.index'))
     return render_template('reset_password.html', form=form)

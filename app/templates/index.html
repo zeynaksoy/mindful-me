@@ -264,15 +264,12 @@
                             <div class="col-md-3">
                                 <select name="sort" class="form-select"
                                     style="background: rgba(255,255,255,0.7); border: none; border-radius: 15px; font-size: 1rem; padding: 10px 15px;">
-                                    <option value="desc" {% if sort_order=='desc' %}selected{% endif %}>{{ _('En Yeni')
-                                        }}</option>
-                                    <option value="asc" {% if sort_order=='asc' %}selected{% endif %}>{{ _('En Eski') }}
-                                    </option>
+                                    <option value="desc" {% if sort_order=='desc' %}selected{% endif %}>{{ _('En Yeni') }}</option>
+                                    <option value="asc" {% if sort_order=='asc' %}selected{% endif %}>{{ _('En Eski') }}</option>
                                 </select>
                             </div>
                             <div class="col-md-2 d-grid">
-                                <button type="submit" class="btn btn-glass" style="border-radius: 15px;">{{ _('Ara')
-                                    }}</button>
+                                <button type="submit" class="btn btn-glass" style="border-radius: 15px;">{{ _('Ara') }}</button>
                             </div>
                         </div>
                     </form>
@@ -293,8 +290,7 @@
                                         {% else %}{{ entry.mood }}{% endif %}
                                     </h5>
                                     <div class="d-flex align-items-center">
-                                        <small class="text-muted me-3">{{ entry.timestamp.strftime('%d.%m.%Y %H:%M') if
-                                            entry.timestamp else '' }}</small>
+                                        <small class="text-muted me-3">{{ entry.timestamp.strftime('%d.%m.%Y %H:%M') if entry.timestamp else '' }}</small>
                                         <form method="POST" action="{{ url_for('main.delete_entry', id=entry.id) }}"
                                             class="m-0"
                                             onsubmit="return confirm('{{ _('Bu kaydı silmek istediğinden emin misin?') }}');">
@@ -347,17 +343,14 @@
                                                 style="background: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.6);">
                                                 <small class="text-muted d-block text-uppercase"
                                                     style="font-size: 0.75rem;">{{ _('Anahtar Kelimeler') }}</small>
-                                                <strong class="text-dark" style="font-size: 0.9rem;">{{
-                                                    entry.ai_keywords }}</strong>
+                                                <strong class="text-dark" style="font-size: 0.9rem;">{{ entry.ai_keywords }}</strong>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="p-3 rounded-3"
                                         style="background: rgba(106, 17, 203, 0.05); border-left: 4px solid #6a11cb;">
-                                        <p class="mb-0 text-dark" style="font-size: 0.95rem;"><strong>💡 {{
-                                                _('Tavsiye:') }}</strong> <span style="font-style: italic;">{{
-                                                entry.ai_advice }}</span></p>
+                                        <p class="mb-0 text-dark" style="font-size: 0.95rem;"><strong>💡 {{ _('Tavsiye:') }}</strong> <span style="font-style: italic;">{{ entry.ai_advice }}</span></p>
                                     </div>
                                 </div>
                                 {% endif %}

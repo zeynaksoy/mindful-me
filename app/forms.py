@@ -2,35 +2,36 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import TextAreaField, SelectField, SubmitField, FloatField, IntegerField, StringField, PasswordField
 from wtforms.validators import DataRequired, Optional, NumberRange, Email, EqualTo
+from flask_babel import lazy_gettext as _l
 
 class MoodEntryForm(FlaskForm):
-    mood = SelectField('Bugün nasıl hissediyorsun?', choices=[
-        ('mutlu', 'Mutlu 😄'),
-        ('sakin', 'Sakin 😌'),
-        ('stresli', 'Stresli 😰'),
-        ('uzgun', 'Üzgün 😢'),
-        ('heyecanli', 'Heyecanlı 🤩')
+    mood = SelectField(_l('Bugün nasıl hissediyorsun?'), choices=[
+        ('mutlu', _l('Mutlu 😄')),
+        ('sakin', _l('Sakin 😌')),
+        ('stresli', _l('Stresli 😰')),
+        ('uzgun', _l('Üzgün 😢')),
+        ('heyecanli', _l('Heyecanlı 🤩'))
     ], validators=[DataRequired()])
-    text = TextAreaField('Neler düşünüyorsun?', validators=[DataRequired()])
-    sleep_hours = FloatField('Uyku Süresi (Saat)', validators=[Optional(), NumberRange(min=0, max=24)])
-    stress_level = IntegerField('Stres Seviyesi (1-10)', validators=[Optional(), NumberRange(min=1, max=10)])
-    activities = StringField('Aktiviteler (virgülle ayırın)', validators=[Optional()])
-    submit = SubmitField('Kaydet')
+    text = TextAreaField(_l('Neler düşünüyorsun?'), validators=[DataRequired()])
+    sleep_hours = FloatField(_l('Uyku Süresi (Saat)'), validators=[Optional(), NumberRange(min=0, max=24)])
+    stress_level = IntegerField(_l('Stres Seviyesi (1-10)'), validators=[Optional(), NumberRange(min=1, max=10)])
+    activities = StringField(_l('Aktiviteler (virgülle ayırın)'), validators=[Optional()])
+    submit = SubmitField(_l('Kaydet'))
 
 class ProfileForm(FlaskForm):
-    avatar = FileField('Avatar Yükle', validators=[
-        FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], 'Sadece resim dosyaları yüklenebilir!')
+    avatar = FileField(_l('Avatar Yükle'), validators=[
+        FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'webp'], _l('Sadece resim dosyaları yüklenebilir!'))
     ])
-    submit = SubmitField('Profili Güncelle')
+    submit = SubmitField(_l('Profili Güncelle'))
 
 class ForgotPasswordForm(FlaskForm):
-    email = StringField('E-posta', validators=[DataRequired(), Email(message='Geçerli bir e-posta adresi giriniz.')])
-    submit = SubmitField('Şifre Sıfırlama Linki Gönder')
+    email = StringField(_l('E-posta'), validators=[DataRequired(), Email(message=_l('Geçerli bir e-posta adresi giriniz.'))])
+    submit = SubmitField(_l('Şifre Sıfırlama Linki Gönder'))
 
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField('Yeni Şifre', validators=[DataRequired()])
-    confirm_password = PasswordField('Şifre Tekrar', validators=[
+    password = PasswordField(_l('Yeni Şifre'), validators=[DataRequired()])
+    confirm_password = PasswordField(_l('Şifre Tekrar'), validators=[
         DataRequired(),
-        EqualTo('password', message='Şifreler eşleşmiyor.')
+        EqualTo('password', message=_l('Şifreler eşleşmiyor.'))
     ])
-    submit = SubmitField('Şifreyi Sıfırla')
+    submit = SubmitField(_l('Şifreyi Sıfırla'))
