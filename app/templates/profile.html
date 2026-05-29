@@ -266,7 +266,8 @@
 
         <!-- Rozetler ve Seri -->
         <div class="glass-card mt-5">
-            <h5 class="fw-bold mb-4">🏆 {{ _('Kazanılan Rozetler (Seri: %(count)s Gün)', count=(user.streak_count if user and user.streak_count else 0)) }}</h5>
+            <h5 class="fw-bold mb-4">🏆 {{ _('Kazanılan Rozetler (Seri: %(count)s Gün)', count=(user.streak_count if
+                user and user.streak_count else 0)) }}</h5>
             <div class="d-flex flex-wrap gap-3">
                 {% for badge in badges %}
                 <div class="glass-card text-center p-3"

@@ -147,7 +147,7 @@ def get_mood_history():
     except Exception as e:
         return []
 
-def calculate_insights(entries):
+def calculate_lifestyle_insights(entries):
     insights = []
     if not entries:
         return [{'icon': '📊', 'text': _('Yeterli veri biriktiğinde kişisel içgörüleriniz burada görünecek.')}]
@@ -190,6 +190,70 @@ def calculate_insights(entries):
         
     return insights
 
+def generate_comprehensive_report(entries):
+    report = {
+        'insights': [],
+        'sleep_vs_stress': {'labels': [], 'data': []},
+        'caffeine_sleep_stress': [],
+        'screen_time_vs_stress': {'labels': [_('0-2 saat'), _('2-5 saat'), _('5+ saat')], 'data': [0, 0, 0]}
+    }
+    if not entries:
+        return json.dumps(report)
+        
+    sleep_stress = {1: [], 2: [], 3: [], 4: [], 5: []}
+    caffeine_sleep_stress_list = []
+    screen_time_stress = {'0-2': [], '2-5': [], '5+': []}
+    
+    for e in entries:
+        st = getattr(e, 'stress_level', None)
+        if st is None: continue
+            
+        sq = getattr(e, 'sleep_quality', None)
+        if sq is not None and str(sq).isdigit() and int(sq) in sleep_stress:
+            sleep_stress[int(sq)].append(st)
+            
+        cf = getattr(e, 'caffeine_intake', None)
+        sh = getattr(e, 'sleep_hours', None)
+        if cf is not None and sh is not None:
+            caffeine_sleep_stress_list.append({
+                'x': cf,
+                'y': sh,
+                'r': st * 3, # Bubble size
+                'stress': st
+            })
+            
+        scr = getattr(e, 'screen_time', None)
+        if scr is not None:
+            if scr <= 2: screen_time_stress['0-2'].append(st)
+            elif scr <= 5: screen_time_stress['2-5'].append(st)
+            else: screen_time_stress['5+'].append(st)
+            
+    for i in range(1, 6):
+        report['sleep_vs_stress']['labels'].append(f'Kalite {i}')
+        if sleep_stress[i]:
+            report['sleep_vs_stress']['data'].append(round(sum(sleep_stress[i])/len(sleep_stress[i]), 1))
+        else:
+            report['sleep_vs_stress']['data'].append(0)
+            
+    if screen_time_stress['0-2']: report['screen_time_vs_stress']['data'][0] = round(sum(screen_time_stress['0-2'])/len(screen_time_stress['0-2']), 1)
+    if screen_time_stress['2-5']: report['screen_time_vs_stress']['data'][1] = round(sum(screen_time_stress['2-5'])/len(screen_time_stress['2-5']), 1)
+    if screen_time_stress['5+']: report['screen_time_vs_stress']['data'][2] = round(sum(screen_time_stress['5+'])/len(screen_time_stress['5+']), 1)
+        
+    report['caffeine_sleep_stress'] = caffeine_sleep_stress_list
+    
+    high_caf_low_sleep = [item['stress'] for item in caffeine_sleep_stress_list if item['x'] > 3 and item['y'] < 6]
+    low_caf_good_sleep = [item['stress'] for item in caffeine_sleep_stress_list if item['x'] <= 3 and item['y'] >= 7]
+    
+    if high_caf_low_sleep and low_caf_good_sleep:
+        avg_bad = sum(high_caf_low_sleep)/len(high_caf_low_sleep)
+        avg_good = sum(low_caf_good_sleep)/len(low_caf_good_sleep)
+        if avg_bad > avg_good:
+            diff = avg_bad - avg_good
+            report['insights'].append(_('Yüksek kafein alıp az uyuduğunuz günlerde stres seviyeniz, iyi uyuduğunuz günlere kıyasla ortalama %(diff).1f puan daha yüksek.', diff=diff))
+
+    return json.dumps(report)
+
+
 @main.route('/', methods=['GET', 'POST'])
 def index():
     form = MoodEntryForm()
@@ -213,6 +277,11 @@ def index():
             caffeine_intake=form.caffeine_intake.data,
             screen_time=form.screen_time.data
         )
+        
+        # Uyku analizi (sleep_hours 6'dan az ise uyarı ekle)
+        if entry.sleep_hours and float(entry.sleep_hours) < 6:
+            entry.ai_advice = "Uykunu 6 saatin altında aldığında stres seviyenin arttığını fark ettim. Bugün biraz daha erken yatmaya ne dersin?"
+            
         db.session.add(entry)
         
         # Streak (Seri) Hesaplama
@@ -321,11 +390,12 @@ def index():
     heatmap_json = json.dumps(heatmap_data)
     
     mood_history = get_mood_history()
+    comp_report = generate_comprehensive_report(entries_for_stats)
     
     return render_template('index.html', form=form, entries=entries, suggestion=current_suggestion, 
                            chart_json=json.dumps(chart_json), search_query=search_query, sort_order=sort_order,
                            smart_insight=smart_insight, correlation_chart_json=correlation_chart_json, 
-                           heatmap_json=heatmap_json, mood_history=mood_history)
+                           heatmap_json=heatmap_json, mood_history=mood_history, comp_report=comp_report)
 
 @main.route('/delete/<int:id>', methods=['POST'])
 def delete_entry(id):
@@ -427,7 +497,7 @@ def profile():
         {'name': _('İstikrarlı'), 'icon': '🔥', 'desc': _('7 Günlük Seri'), 'earned': streak >= 7},
         {'name': _('Zen Ustası'), 'icon': '👑', 'desc': _('30 Günlük Seri'), 'earned': streak >= 30}
     ]
-    insights = calculate_insights(all_entries)
+    insights = calculate_lifestyle_insights(all_entries)
 
     return render_template('profile.html', user=user, form=form,
                            total_entries=total_entries, mood_counts=mood_counts,

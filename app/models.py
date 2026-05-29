@@ -56,6 +56,12 @@ class MoodEntry(db.Model):
     dream_note = db.Column(db.Text, nullable=True)
     caffeine_intake = db.Column(db.Integer, nullable=True)
     screen_time = db.Column(db.Integer, nullable=True)
+    
+    # Yaşam Tarzı Analizcisi (Lifestyle Analyzer) Alanları
+    is_work_day = db.Column(db.Boolean, nullable=True, default=False)
+    social_interaction_score = db.Column(db.Integer, nullable=True) # 1-5
+    weather_condition = db.Column(db.String(50), nullable=True)
+    notes = db.Column(db.Text, nullable=True)
 
     def to_dict(self):
         return {
