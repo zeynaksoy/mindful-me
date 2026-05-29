@@ -221,6 +221,22 @@
             </div>
         </div>
 
+        <!-- Rozetler ve Seri -->
+        <div class="glass-card mt-5">
+            <h5 class="fw-bold mb-4">🏆 {{ _('Kazanılan Rozetler (Seri: %(count)s Gün)', count=user.streak_count) }}</h5>
+            <div class="d-flex flex-wrap gap-3">
+                {% for badge in badges %}
+                <div class="glass-card text-center p-3" style="min-width: 120px; border-radius: 15px; background: rgba(255,255,255,0.9);">
+                    <div style="font-size: 2.5rem;">{{ badge.icon }}</div>
+                    <div class="fw-bold mt-2" style="font-size: 0.9rem; color: #6a11cb;">{{ badge.name }}</div>
+                    <div class="text-muted small">{{ badge.desc }}</div>
+                </div>
+                {% else %}
+                <p class="text-muted small mb-0">{{ _('Henüz bir rozet kazanmadınız. Günlük girmeye başlayın!') }}</p>
+                {% endfor %}
+            </div>
+        </div>
+
         <!-- İstatistikler -->
         <div class="glass-card mt-5">
             <h5 class="fw-bold mb-4">📊 {{ _('Kişisel İstatistiklerim') }}</h5>

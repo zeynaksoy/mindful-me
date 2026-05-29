@@ -165,6 +165,21 @@ def index():
             ai_keywords=keywords
         )
         db.session.add(entry)
+        
+        # Streak (Seri) Hesaplama
+        user = User.query.first()
+        if user:
+            today = datetime.utcnow().date()
+            if user.last_entry_date:
+                diff = (today - user.last_entry_date).days
+                if diff == 1:
+                    user.streak_count += 1
+                elif diff > 1:
+                    user.streak_count = 1
+            else:
+                user.streak_count = 1
+            user.last_entry_date = today
+
         db.session.commit()
         return redirect(url_for('main.index'))
     
@@ -327,9 +342,18 @@ def profile():
                          if user.avatar_file and user.avatar_file != 'default.png' \
                          else None
 
+        # Rozet Mantığı
+        badges = []
+        if user.streak_count >= 3:
+            badges.append({'name': _('Başlangıç'), 'icon': '🌱', 'desc': _('3 Günlük Seri')})
+        if user.streak_count >= 7:
+            badges.append({'name': _('İstikrarlı'), 'icon': '🔥', 'desc': _('7 Günlük Seri')})
+        if user.streak_count >= 30:
+            badges.append({'name': _('Zen Ustası'), 'icon': '👑', 'desc': _('30 Günlük Seri')})
+
         return render_template('profile.html', user=user, form=form,
                                total_entries=total_entries, mood_counts=mood_counts,
-                               best_mood=best_mood, avatar_url=avatar_url)
+                               best_mood=best_mood, avatar_url=avatar_url, badges=badges)
     except Exception as e:
         db.session.rollback()
         flash(_('Profil işlemlerinde geçici bir hata oluştu.'), 'danger')

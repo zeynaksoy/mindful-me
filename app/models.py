@@ -10,6 +10,8 @@ class User(db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(256))
     avatar_file = db.Column(db.String(120), nullable=False, default='default.png')
+    streak_count = db.Column(db.Integer, default=0)
+    last_entry_date = db.Column(db.Date, nullable=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
