@@ -851,8 +851,8 @@ def reset_password(token):
 import io
 from flask import send_file
 
-@main.route('/export_pdf')
-def export_pdf():
+@main.route('/export_pdf_legacy')
+def export_pdf_legacy():
     try:
         from fpdf import FPDF
     except ImportError:
