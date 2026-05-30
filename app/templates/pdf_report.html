@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Mindful-Me {{ _('Günlük Raporu') }}</title>
+    <style>
+        /* PDF and Print Styles */
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        body {
+            font-family: "DejaVu Sans", "Helvetica Neue", Arial, sans-serif;
+            color: #333;
+            line-height: 1.5;
+            font-size: 12px;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #4facfe;
+        }
+        .header h1 {
+            color: #2c3e50;
+            margin: 0 0 5px 0;
+            font-size: 24px;
+        }
+        .header p {
+            color: #7f8c8d;
+            margin: 0;
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            page-break-inside: auto;
+        }
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #e3f2fd; /* Soft blue */
+            color: #1565c0;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa; /* Zebra stripes */
+        }
+        .insight-box {
+            background-color: #fdfbfb;
+            border-left: 4px solid #8e44ad;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            page-break-inside: avoid;
+        }
+        .insight-box h3 {
+            color: #8e44ad;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .insight-item {
+            margin-bottom: 8px;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 10px;
+            color: #95a5a6;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+        .mood-mutlu { color: #2e7d32; }
+        .mood-sakin { color: #1565c0; }
+        .mood-stresli { color: #f57f17; }
+        .mood-uzgun { color: #c62828; }
+        .mood-heyecanli { color: #6a1b9a; }
+    </style>
+</head>
+<body onload="window.print()">
+    <div class="header">
+        <h1>{{ _('Mindful-Me Günlük Raporu') }}</h1>
+        <p>{{ date_range }}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 15%">{{ _('Tarih') }}</th>
+                <th style="width: 15%">{{ _('Mod') }}</th>
+                <th style="width: 25%">{{ _('Kısa Özet') }}</th>
+                <th style="width: 45%">{{ _('Serbest Yazı') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr>
+                <td>{{ entry.timestamp.strftime('%d.%m.%Y %H:%M') if entry.timestamp else '-' }}</td>
+                <td>
+                    {% if entry.mood == 'mutlu' %}
+                        <strong class="mood-mutlu">😄 {{ _('Mutlu') }}</strong>
+                    {% elif entry.mood == 'sakin' %}
+                        <strong class="mood-sakin">😌 {{ _('Sakin') }}</strong>
+                    {% elif entry.mood == 'stresli' %}
+                        <strong class="mood-stresli">😰 {{ _('Stresli') }}</strong>
+                    {% elif entry.mood == 'uzgun' %}
+                        <strong class="mood-uzgun">😢 {{ _('Üzgün') }}</strong>
+                    {% elif entry.mood == 'heyecanli' %}
+                        <strong class="mood-heyecanli">🤩 {{ _('Heyecanlı') }}</strong>
+                    {% else %}
+                        <strong>{{ entry.mood|capitalize }}</strong>
+                    {% endif %}
+                </td>
+                <td>{{ entry.mini_journal or '-' }}</td>
+                <td>{{ entry.text or entry.free_writing or '-' }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" style="text-align: center; color: #7f8c8d;">{{ _('Henüz kaydedilmiş bir günlük bulunmuyor.') }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if ai_patterns and ai_patterns|length > 0 %}
+    <div class="insight-box">
+        <h3>💡 {{ _('AI İçgörü Kutusu') }}</h3>
+        {% for pattern in ai_patterns %}
+            <div class="insight-item"><strong>•</strong> {{ pattern }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="footer">
+        {{ _('Bu rapor Mindful-Me tarafından oluşturulmuştur.') }}
+    </div>
+</body>
+</html>

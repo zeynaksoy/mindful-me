@@ -621,6 +621,23 @@ def stats():
 def support():
     return render_template('support.html')
 
+@main.route('/export_pdf')
+def export_pdf():
+    # Son 30 günün kayıtlarını alalım veya tümünü alalım (kullanıcıya özel)
+    entries = MoodEntry.query.order_by(MoodEntry.timestamp.desc()).all()
+    
+    # Tarih aralığını bulalım
+    if entries:
+        start_date = entries[-1].timestamp.strftime('%d.%m.%Y')
+        end_date = entries[0].timestamp.strftime('%d.%m.%Y')
+        date_range = f"{start_date} - {end_date}"
+    else:
+        date_range = _("Kayıt Yok")
+        
+    ai_patterns = analyze_patterns(entries)
+    
+    return render_template('pdf_report.html', entries=entries, date_range=date_range, ai_patterns=ai_patterns)
+
 # ── API v1 ────────────────────────────────────────────────
 @main.route('/api/v1/entries', methods=['GET'])
 def api_entries():
