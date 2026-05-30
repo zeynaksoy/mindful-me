@@ -416,6 +416,22 @@
                                     </div>
                                 </div>
                                 {% endif %}
+
+                                {% if loop.index0 == 0 and show_emotional_support %}
+                                <!-- Duygusal Destek Merkezi -->
+                                <div class="glass-card mt-3 p-4" style="background: linear-gradient(135deg, rgba(255, 230, 230, 0.9) 0%, rgba(255, 240, 245, 0.9) 100%); border-left: 5px solid #ff758c; box-shadow: 0 8px 32px rgba(255, 117, 140, 0.2);">
+                                    <h5 class="fw-bold mb-3" style="color: #d81b60;">❤️ {{ _('Duygusal Destek Merkezi') }}</h5>
+                                    <p class="text-dark mb-3" style="font-size: 0.95rem;">{{ _('Yapay zeka şu an stresli veya yorgun olduğunu hissetti. Lütfen kendine biraz zaman ayır. Sana yardımcı olabilecek bazı seçenekler hazırladık:') }}</p>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <button type="button" class="btn btn-sm text-white fw-bold" style="background-color: #ff758c; border-radius: 20px;" onclick="openBreathingModal()">🌬️ {{ _('Nefes Egzersizi Başlat') }}</button>
+                                        <button type="button" class="btn btn-sm text-white fw-bold" style="background-color: #4facfe; border-radius: 20px;" onclick="showMotivationQuote()">✨ {{ _('Motivasyon Al') }}</button>
+                                        <a href="https://www.youtube.com/results?search_query=10+dakikalik+meditasyon" target="_blank" class="btn btn-sm text-white fw-bold" style="background-color: #a18cd1; border-radius: 20px;">🧘 {{ _('Meditasyon Önerisi') }}</a>
+                                    </div>
+                                    <div id="motivationArea" class="mt-3 p-3 rounded-3 text-center" style="display: none; background: rgba(255,255,255,0.8); border: 1px dashed #4facfe;">
+                                        <h6 class="fw-bold mb-0 text-primary">"{{ motivation_quote }}"</h6>
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
                         {% endfor %}
@@ -464,6 +480,30 @@
         </div> <!-- İSTATİSTİKLER SEKME BİTİŞ -->
         </div> <!-- Tab Content Bitiş -->
     </div>
+
+    <!-- Breathing Exercise Modal -->
+    {% if show_emotional_support %}
+    <div class="modal fade" id="breathingModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card" style="background: rgba(255, 255, 255, 0.95); border: none; border-radius: 20px;">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" style="color: #20c997;">🌬️ {{ _('4-7-8 Nefes Egzersizi') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center pt-2">
+                    <p class="text-muted">{{ _('Lütfen arkanıza yaslanın ve yönergeleri izleyin.') }}</p>
+                    <div class="breathing-circle mx-auto my-4 d-flex align-items-center justify-content-center text-white fw-bold fs-4" id="breathCircle" style="width: 150px; height: 150px; border-radius: 50%; background-color: #20c997; transition: all 1s ease; box-shadow: 0 0 20px rgba(32,201,151,0.4);">
+                        {{ _('Hazır') }}
+                    </div>
+                    <h4 id="breathInstruction" class="fw-bold mb-3" style="color: #0c855e;">{{ _('Başlamak için butona tıklayın') }}</h4>
+                    <button class="btn text-white fw-bold px-4" style="background-color: #20c997; border-radius: 20px;" id="startBreathingBtn" onclick="startBreathingExercise()">
+                        {{ _('Başla') }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
     <script>
         // Emoji Seçici Mantığı
@@ -731,6 +771,91 @@
                 }
             });
         }
+
+        {% if show_emotional_support %}
+        function showMotivationQuote() {
+            const el = document.getElementById('motivationArea');
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        let breathingInterval;
+        function openBreathingModal() {
+            const modal = new bootstrap.Modal(document.getElementById('breathingModal'));
+            modal.show();
+            resetBreathing();
+        }
+        
+        function resetBreathing() {
+            clearInterval(breathingInterval);
+            document.getElementById('breathCircle').style.transform = 'scale(1)';
+            document.getElementById('breathCircle').innerText = '{{ _("Hazır") }}';
+            document.getElementById('breathInstruction').innerText = '{{ _("Başlamak için butona tıklayın") }}';
+            document.getElementById('startBreathingBtn').style.display = 'inline-block';
+        }
+        
+        function startBreathingExercise() {
+            document.getElementById('startBreathingBtn').style.display = 'none';
+            const circle = document.getElementById('breathCircle');
+            const instruction = document.getElementById('breathInstruction');
+            
+            function breatheIn() {
+                instruction.innerText = '{{ _("Nefes Al (4 sn)") }}';
+                circle.style.transform = 'scale(1.5)';
+                circle.style.backgroundColor = '#4facfe';
+                circle.innerText = '4';
+                let count = 4;
+                breathingInterval = setInterval(() => {
+                    count--;
+                    circle.innerText = count > 0 ? count : '';
+                    if (count <= 0) {
+                        clearInterval(breathingInterval);
+                        holdBreath();
+                    }
+                }, 1000);
+            }
+            
+            function holdBreath() {
+                instruction.innerText = '{{ _("Tut (7 sn)") }}';
+                circle.style.backgroundColor = '#a18cd1';
+                circle.innerText = '7';
+                let count = 7;
+                breathingInterval = setInterval(() => {
+                    count--;
+                    circle.innerText = count > 0 ? count : '';
+                    if (count <= 0) {
+                        clearInterval(breathingInterval);
+                        breatheOut();
+                    }
+                }, 1000);
+            }
+            
+            function breatheOut() {
+                instruction.innerText = '{{ _("Nefes Ver (8 sn)") }}';
+                circle.style.transform = 'scale(1)';
+                circle.style.backgroundColor = '#20c997';
+                circle.innerText = '8';
+                let count = 8;
+                breathingInterval = setInterval(() => {
+                    count--;
+                    circle.innerText = count > 0 ? count : '';
+                    if (count <= 0) {
+                        clearInterval(breathingInterval);
+                        setTimeout(() => {
+                            breatheIn();
+                        }, 500);
+                    }
+                }, 1000);
+            }
+            
+            breatheIn();
+        }
+        
+        document.addEventListener('hidden.bs.modal', function (event) {
+            if (event.target.id === 'breathingModal') {
+                resetBreathing();
+            }
+        });
+        {% endif %}
     </script>
 </body>
 
