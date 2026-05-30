@@ -292,6 +292,76 @@ def calculate_lifestyle_insights(entries):
         
     return insights
 
+def analyze_patterns(entries=None):
+    if not entries:
+        try:
+            thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+            entries = MoodEntry.query.filter(MoodEntry.timestamp >= thirty_days_ago).all()
+        except:
+            return []
+
+    patterns = []
+    if len(entries) < 3:
+        return patterns
+
+    day_stress = {i: [] for i in range(7)}
+    day_names = [_('Pazartesi'), _('Salı'), _('Çarşamba'), _('Perşembe'), _('Cuma'), _('Cumartesi'), _('Pazar')]
+    
+    high_screen_moods = []
+    low_screen_moods = []
+    
+    high_caf_sleep_q = []
+    low_caf_sleep_q = []
+
+    for e in entries:
+        if not e.timestamp: continue
+        
+        # 1. Zaman Analizi (Haftalık Döngü)
+        day_idx = e.timestamp.weekday()
+        if getattr(e, 'stress_level', None) is not None:
+            day_stress[day_idx].append(e.stress_level)
+
+        # 2. Tetikleyici Analizi (Ekran Süresi)
+        scr = getattr(e, 'screen_time', None)
+        if scr is not None:
+            score = MOOD_VALUES.get(e.mood, 3)
+            if scr > 5:
+                high_screen_moods.append(score)
+            else:
+                low_screen_moods.append(score)
+
+        # 3. İçerik Analizi (Kafein - Uyku)
+        sq = getattr(e, 'sleep_quality', None)
+        cf = getattr(e, 'caffeine_intake', None)
+        if sq is not None and str(sq).isdigit() and cf is not None:
+            if cf >= 3:
+                high_caf_sleep_q.append(int(sq))
+            else:
+                low_caf_sleep_q.append(int(sq))
+
+    # Zaman
+    for day_idx, stresses in day_stress.items():
+        if len(stresses) >= 2:
+            avg_stress = sum(stresses) / len(stresses)
+            if avg_stress >= 7:
+                patterns.append(_("Zaman Analizi: %(day)s günleri stres seviyeniz belirgin şekilde yükseliyor.", day=day_names[day_idx]))
+
+    # Ekran
+    if len(high_screen_moods) >= 2 and len(low_screen_moods) >= 2:
+        avg_high = sum(high_screen_moods) / len(high_screen_moods)
+        avg_low = sum(low_screen_moods) / len(low_screen_moods)
+        if avg_high < avg_low - 0.5:
+            patterns.append(_("Tetikleyici Analizi: Ekran süreniz 5 saati geçtiğinde mutluluk skorunuz düşüyor."))
+
+    # Kafein
+    if len(high_caf_sleep_q) >= 2 and len(low_caf_sleep_q) >= 2:
+        avg_high_caf = sum(high_caf_sleep_q) / len(high_caf_sleep_q)
+        avg_low_caf = sum(low_caf_sleep_q) / len(low_caf_sleep_q)
+        if avg_high_caf < avg_low_caf - 0.5:
+            patterns.append(_("İçerik Analizi: Kafein sonrası uyku kalitesi düşüyor."))
+
+    return patterns
+
 def generate_comprehensive_report(entries):
     report = {
         'insights': [],
@@ -657,12 +727,14 @@ def profile():
     except Exception:
         pass
 
+    ai_patterns = analyze_patterns()
+
     return render_template('profile.html', user=user, form=form,
                            total_entries=total_entries, mood_counts=mood_counts,
                            best_mood=best_mood, avatar_url=avatar_url, badges=badges,
                            insights=insights, smart_coach_feedback=smart_coach_feedback,
                            top_activities=top_activities, show_support_card=show_support_card,
-                           motivation_quote=motivation_quote)
+                           motivation_quote=motivation_quote, ai_patterns=ai_patterns)
 
 @main.route('/change_password', methods=['GET', 'POST'])
 def change_password():
