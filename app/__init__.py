@@ -19,7 +19,7 @@ def get_locale():
 
 def create_app():
     """Create and configure the Flask application."""
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder='templates')
     app.config.from_object('config.Config')
 
     db.init_app(app)
