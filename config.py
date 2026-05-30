@@ -10,6 +10,8 @@ class Config:
         'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     LANGUAGES = ['tr', 'en']
+    BABEL_DEFAULT_LOCALE = 'tr'
+    BABEL_DEFAULT_TIMEZONE = 'Europe/Istanbul'
     
     # Flask-Mail Ayarları
     MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')

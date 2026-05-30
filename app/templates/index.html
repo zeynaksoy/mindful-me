@@ -349,7 +349,7 @@
                                         <form method="POST" action="{{ url_for('main.delete_entry', id=entry.id) }}"
                                             class="m-0"
                                             onsubmit="return confirm('{{ _('Bu kaydı silmek istediğinden emin misin?') }}');">
-                                            <button type="submit" class="btn btn-sm" title="Sil"
+                                            <button type="submit" class="btn btn-sm" title="{{ _('Sil') }}"
                                                 style="background: transparent; border: none; transition: transform 0.2s;"
                                                 onmouseover="this.style.transform='scale(1.2)'"
                                                 onmouseout="this.style.transform='scale(1)'">
@@ -543,7 +543,7 @@
             data: {
                 labels: chartDataRaw.labels,
                 datasets: [{
-                    label: 'Duygu Seviyesi',
+                    label: '{{ _("Duygu Seviyesi") }}',
                     data: chartDataRaw.data,
                     borderColor: '#ff758c',
                     backgroundColor: 'rgba(255, 117, 140, 0.2)',
@@ -577,8 +577,8 @@
                     tooltip: {
                         callbacks: {
                             label: function (context) {
-                                const labels = { 1: 'Üzgün', 2: 'Stresli', 3: 'Sakin', 4: 'Mutlu', 5: 'Heyecanlı' };
-                                return 'Ortalama: ' + (labels[Math.round(context.raw)] || context.raw);
+                                const labels = { 1: '{{ _("Üzgün") }}', 2: '{{ _("Stresli") }}', 3: '{{ _("Sakin") }}', 4: '{{ _("Mutlu") }}', 5: '{{ _("Heyecanlı") }}' };
+                                return '{{ _("Ortalama:") }} ' + (labels[Math.round(context.raw)] || context.raw);
                             }
                         }
                     }
@@ -595,7 +595,7 @@
                 data: {
                     labels: corrDataRaw.labels,
                     datasets: [{
-                        label: 'Ortalama Mutluluk (1-5)',
+                        label: '{{ _("Ortalama Mutluluk (1-5)") }}',
                         data: corrDataRaw.data,
                         backgroundColor: 'rgba(92, 184, 92, 0.5)',
                         borderColor: '#5cb85c',
@@ -628,7 +628,7 @@
                 data: {
                     labels: heatLabels,
                     datasets: [{
-                        label: 'Kayıt Sayısı',
+                        label: '{{ _("Kayıt Sayısı") }}',
                         data: heatVals,
                         backgroundColor: heatVals.map(v => `rgba(255, 117, 140, ${0.2 + (v * 0.2)})`),
                         borderColor: '#ff758c',
@@ -668,7 +668,7 @@
                     data: {
                         labels: compReportRaw.sleep_vs_stress.labels,
                         datasets: [{
-                            label: 'Ortalama Stres',
+                            label: '{{ _("Ortalama Stres") }}',
                             data: compReportRaw.sleep_vs_stress.data,
                             backgroundColor: 'rgba(255, 99, 132, 0.5)',
                             borderColor: '#ff6384',
@@ -685,7 +685,7 @@
                     data: {
                         labels: compReportRaw.screen_time_vs_stress.labels,
                         datasets: [{
-                            label: 'Ortalama Stres',
+                            label: '{{ _("Ortalama Stres") }}',
                             data: compReportRaw.screen_time_vs_stress.data,
                             backgroundColor: 'rgba(54, 162, 235, 0.5)',
                             borderColor: '#36a2eb',
@@ -702,7 +702,7 @@
                     type: 'bubble',
                     data: {
                         datasets: [{
-                            label: 'Kayıtlar',
+                            label: '{{ _("Kayıtlar") }}',
                             data: bubbleData,
                             backgroundColor: 'rgba(153, 102, 255, 0.5)',
                             borderColor: '#9966ff',
@@ -712,14 +712,14 @@
                     options: {
                         responsive: true,
                         scales: {
-                            x: { title: { display: true, text: 'Kafein Miktarı (Fincan)' }, min: -1 },
-                            y: { title: { display: true, text: 'Uyku Süresi (Saat)' }, min: 0, max: 24 }
+                            x: { title: { display: true, text: '{{ _("Kafein Miktarı (Fincan)") }}' }, min: -1 },
+                            y: { title: { display: true, text: '{{ _("Uyku Süresi (Saat)") }}' }, min: 0, max: 24 }
                         },
                         plugins: {
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
-                                        return `Kafein: ${context.raw.x}, Uyku: ${context.raw.y}s, Stres: ${context.raw.stress}`;
+                                        return `{{ _("Kafein:") }} ${context.raw.x}, {{ _("Uyku:") }} ${context.raw.y}s, {{ _("Stres:") }} ${context.raw.stress}`;
                                     }
                                 }
                             }

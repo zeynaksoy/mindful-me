@@ -15,7 +15,7 @@ scheduler = APScheduler()
 def get_locale():
     if 'language' in session:
         return session['language']
-    return request.accept_languages.best_match(['tr', 'en'])
+    return request.accept_languages.best_match(['tr', 'en'], default='tr')
 
 def create_app():
     """Create and configure the Flask application."""

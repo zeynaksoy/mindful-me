@@ -401,7 +401,7 @@ def generate_comprehensive_report(entries):
             else: screen_time_stress['5+'].append(st)
             
     for i in range(1, 6):
-        report['sleep_vs_stress']['labels'].append(f'Kalite {i}')
+        report['sleep_vs_stress']['labels'].append(_('Kalite %(num)s', num=i))
         if sleep_stress[i]:
             report['sleep_vs_stress']['data'].append(round(sum(sleep_stress[i])/len(sleep_stress[i]), 1))
         else:
