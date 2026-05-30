@@ -246,12 +246,10 @@
                         </div>
 
                         <!-- Hızlı Emoji Seçimi -->
-                        <div class="emoji-selector">
-                            <span class="emoji-btn" data-value="uzgun" title="{{ _('Üzgün') }}">😢</span>
-                            <span class="emoji-btn" data-value="stresli" title="{{ _('Stresli') }}">😰</span>
-                            <span class="emoji-btn" data-value="sakin" title="{{ _('Sakin') }}">😌</span>
-                            <span class="emoji-btn" data-value="mutlu" title="{{ _('Mutlu') }}">😄</span>
-                            <span class="emoji-btn" data-value="heyecanli" title="{{ _('Heyecanlı') }}">🤩</span>
+                        <div class="emoji-selector d-flex flex-wrap gap-2 justify-content-center mb-3">
+                            {% for mood_item in MOOD_DATA %}
+                            <span class="emoji-btn" data-value="{{ mood_item.value }}" title="{{ mood_item.label }}" style="font-size: 1.8rem; cursor: pointer; transition: transform 0.2s;">{{ mood_item.emoji }}</span>
+                            {% endfor %}
                         </div>
 
                         <div class="mb-3">
@@ -923,11 +921,10 @@
         <form action="{{ url_for('main.quick_entry') }}" method="POST" class="d-flex w-100 align-items-center justify-content-between px-2 m-0" id="quickEntryForm">
             {{ form.hidden_tag() }}
             <span class="fw-bold" style="color: #6a11cb; font-size: 0.9rem;">{{ _('Hızlı Ekle:') }}</span>
-            <div class="d-flex gap-2">
-                <button type="submit" name="mood" value="mutlu" class="btn btn-sm btn-outline-success rounded-circle d-flex align-items-center justify-content-center" style="width:40px; height:40px; font-size: 1.2rem;">😄</button>
-                <button type="submit" name="mood" value="sakin" class="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" style="width:40px; height:40px; font-size: 1.2rem;">😌</button>
-                <button type="submit" name="mood" value="stresli" class="btn btn-sm btn-outline-warning rounded-circle d-flex align-items-center justify-content-center" style="width:40px; height:40px; font-size: 1.2rem;">😰</button>
-                <button type="submit" name="mood" value="uzgun" class="btn btn-sm btn-outline-danger rounded-circle d-flex align-items-center justify-content-center" style="width:40px; height:40px; font-size: 1.2rem;">😢</button>
+            <div class="d-flex flex-wrap gap-2 justify-content-center align-items-center" style="max-width: 80%;">
+                {% for mood_item in MOOD_DATA %}
+                <button type="submit" name="mood" value="{{ mood_item.value }}" class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0" style="width:36px; height:36px; font-size: 1.1rem; border-color: rgba(106,17,203,0.2);" title="{{ mood_item.label }}">{{ mood_item.emoji }}</button>
+                {% endfor %}
             </div>
         </form>
     </div>

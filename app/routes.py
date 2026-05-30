@@ -44,19 +44,38 @@ def check_daily_moods():
                         user.pending_notification = _l("Bugünkü ruh halini kaydetmek ister misin?")
         db.session.commit()
 
+@main.context_processor
+def inject_moods():
+    return dict(MOOD_DATA=[
+        {'value': 'mutlu', 'label': _('Mutlu'), 'emoji': '😄'},
+        {'value': 'sakin', 'label': _('Sakin'), 'emoji': '😌'},
+        {'value': 'odaklanmis', 'label': _('Odaklanmış'), 'emoji': '🎯'},
+        {'value': 'yaratici', 'label': _('Yaratıcı'), 'emoji': '🎨'},
+        {'value': 'heyecanli', 'label': _('Heyecanlı'), 'emoji': '🤩'},
+        {'value': 'stresli', 'label': _('Stresli'), 'emoji': '😰'},
+        {'value': 'bitkin', 'label': _('Bitkin'), 'emoji': '😫'},
+        {'value': 'uzgun', 'label': _('Üzgün'), 'emoji': '😢'}
+    ])
+
 MOOD_VALUES = {
     'heyecanli': 5,
     'mutlu': 4,
+    'odaklanmis': 4,
+    'yaratici': 4,
     'sakin': 3,
     'stresli': 2,
+    'bitkin': 1,
     'uzgun': 1
 }
 
 SUGGESTIONS = {
     'heyecanli': _l('Harika bir enerji! Bu enerjiyi yaratıcı bir hobiye veya spora yönlendirmeyi dene.'),
     'mutlu': _l('Bu anı bir kutlama ile taçlandır! Kendine sevdiğin bir içecek ısmarla veya en sevdiğin şarkıyı dinle.'),
+    'odaklanmis': _l('Zihnin çok berrak. Önemli bir görevi bitirmek veya yeni bir şey öğrenmek için mükemmel bir zaman.'),
+    'yaratici': _l('İlham perilerin seninle! Bir şeyler çizmeyi, yazmayı veya yeni bir fikir üretmeyi dene.'),
     'sakin': _l('Bu huzurlu anın tadını çıkar. Birkaç sayfa kitap okumak veya kısa bir yürüyüş için harika bir zaman.'),
     'stresli': _l('Derin bir nefes al... Omuzlarını serbest bırak. Gözlerini kapatıp 2 dakika sadece durmayı dene.'),
+    'bitkin': _l('Vücudunun dinlenmeye ihtiyacı var. Belki kısa bir şekerleme yapabilir veya sadece uzanıp müzik dinleyebilirsin.'),
     'uzgun': _l('Bir bardak su iç ve kendine sarıl. Duygularını hissetmek tamamen normal, geçici olduklarını unutma.')
 }
 
@@ -603,7 +622,7 @@ def delete_entry(id):
 def quick_entry():
     mood = request.form.get('mood')
     if mood:
-        entry = MoodEntry(mood=mood, text=_('Hızlı giriş yapıldı.'), user_id=1)
+        entry = MoodEntry(mood=mood, text=_('Hızlı giriş yapıldı.'))
         db.session.add(entry)
         db.session.commit()
         flash(_('Hızlı kayıt başarıyla eklendi!'), 'success')

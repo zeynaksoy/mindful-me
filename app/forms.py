@@ -9,9 +9,12 @@ class MoodEntryForm(FlaskForm):
     mood = SelectField(_l('Bugün nasıl hissediyorsun?'), choices=[
         ('mutlu', _l('Mutlu 😄')),
         ('sakin', _l('Sakin 😌')),
+        ('odaklanmis', _l('Odaklanmış 🎯')),
+        ('yaratici', _l('Yaratıcı 🎨')),
+        ('heyecanli', _l('Heyecanlı 🤩')),
         ('stresli', _l('Stresli 😰')),
-        ('uzgun', _l('Üzgün 😢')),
-        ('heyecanli', _l('Heyecanlı 🤩'))
+        ('bitkin', _l('Bitkin 😫')),
+        ('uzgun', _l('Üzgün 😢'))
     ], validators=[DataRequired()])
     text = TextAreaField(_l('Neler düşünüyorsun?'), validators=[DataRequired()])
     mini_journal = StringField(_l('Günün Özeti'), validators=[Optional()])
