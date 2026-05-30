@@ -425,6 +425,24 @@ def index():
         
     entries = query.all()
     
+    # Duygusal Destek Merkezi Kontrolü
+    show_emotional_support = False
+    motivation_quote = ""
+    if entries:
+        latest = entries[0]
+        text_to_check = f"{latest.text or ''} {getattr(latest, 'mini_journal', '') or ''} {getattr(latest, 'free_writing', '') or ''}".lower()
+        if (latest.ai_score is not None and latest.ai_score < 5) or any(w in text_to_check for w in ['stresli', 'yorgun']):
+            show_emotional_support = True
+            import random
+            quotes = [
+                _("Nefes al, bu sadece kötü bir an, kötü bir hayat değil."),
+                _("Senin değerin hissettiğin stresten çok daha büyük."),
+                _("Şu an her şey üstüne geliyor gibi olabilir, sadece dur ve derin bir nefes al."),
+                _("Zor zamanlar güçlü insanlar yaratır, yapabilirsin."),
+                _("Bugün sadece kendine iyi davranmaya odaklan.")
+            ]
+            motivation_quote = random.choice(quotes)
+    
     # Strategy 2: Görev Motoru (Son kayda göre dinamik öneri)
     current_suggestion = None
     if entries:
@@ -500,7 +518,8 @@ def index():
     return render_template('index.html', form=form, entries=entries, suggestion=current_suggestion, 
                            chart_json=json.dumps(chart_json), search_query=search_query, sort_order=sort_order,
                            smart_insight=smart_insight, correlation_chart_json=correlation_chart_json, 
-                           heatmap_json=heatmap_json, mood_history=mood_history, comp_report=comp_report)
+                           heatmap_json=heatmap_json, mood_history=mood_history, comp_report=comp_report,
+                           show_emotional_support=show_emotional_support, motivation_quote=motivation_quote)
 
 @main.route('/delete/<int:id>', methods=['POST'])
 def delete_entry(id):
@@ -614,11 +633,36 @@ def profile():
     insights = calculate_lifestyle_insights(all_entries)
     top_activities = get_best_feeling_activities(all_entries)
 
+    # Destek Kartı Kontrolü
+    show_support_card = False
+    motivation_quote = ""
+    try:
+        latest_entry = MoodEntry.query.order_by(MoodEntry.timestamp.desc()).first()
+        if latest_entry:
+            score = MOOD_VALUES.get(latest_entry.mood, 3)
+            bad_words = ['kötü', 'stresli', 'üzgün', 'uzgun', 'kotu']
+            text_to_check = f"{latest_entry.text or ''} {getattr(latest_entry, 'mini_journal', '') or ''} {getattr(latest_entry, 'free_writing', '') or ''}".lower()
+            has_bad_word = any(word in text_to_check for word in bad_words)
+            if score < 3 or has_bad_word:
+                show_support_card = True
+                import random
+                quotes = [
+                    _("Zor zamanlar geçicidir, ama güçlü insanlar kalıcıdır."),
+                    _("Her yeni gün, yeni bir başlangıçtır."),
+                    _("İçindeki güce güven, sen bundan daha güçlüsün."),
+                    _("Küçük adımlar, büyük değişimlere yol açar. Sadece devam et."),
+                    _("Kendine şefkat göster, bugün elinden gelenin en iyisini yapıyorsun.")
+                ]
+                motivation_quote = random.choice(quotes)
+    except Exception:
+        pass
+
     return render_template('profile.html', user=user, form=form,
                            total_entries=total_entries, mood_counts=mood_counts,
                            best_mood=best_mood, avatar_url=avatar_url, badges=badges,
                            insights=insights, smart_coach_feedback=smart_coach_feedback,
-                           top_activities=top_activities)
+                           top_activities=top_activities, show_support_card=show_support_card,
+                           motivation_quote=motivation_quote)
 
 @main.route('/change_password', methods=['GET', 'POST'])
 def change_password():
