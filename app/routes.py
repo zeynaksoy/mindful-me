@@ -617,6 +617,34 @@ def delete_entry(id):
     db.session.commit()
     return redirect(url_for('main.index'))
 
+@main.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit_entry(id):
+    entry = MoodEntry.query.get_or_404(id)
+    form = MoodEntryForm(obj=entry)
+    
+    if form.validate_on_submit():
+        entry.mood = form.mood.data
+        entry.text = form.text.data
+        entry.mini_journal = form.mini_journal.data
+        entry.free_writing = form.free_writing.data
+        entry.sleep_hours = form.sleep_hours.data
+        entry.stress_level = form.stress_level.data
+        entry.activities = form.activities.data
+        
+        # Need to re-analyze AI stats because text changed
+        sentiment, score, keywords, analysis, advice = analyze_journal_entry(entry.mood, entry.text, entry.free_writing)
+        entry.ai_sentiment = sentiment
+        entry.ai_score = score
+        entry.ai_keywords = keywords
+        entry.ai_analysis = analysis
+        entry.ai_advice = advice
+
+        db.session.commit()
+        flash(_('Günlüğünüz başarıyla güncellendi! ✏️'), 'success')
+        return redirect(url_for('main.index'))
+        
+    return render_template('edit_entry.html', form=form, entry=entry)
+
 # ── Hızlı Kayıt ──────────────────────────────────────────────
 @main.route('/quick_entry', methods=['POST'])
 def quick_entry():

@@ -404,6 +404,12 @@
                                     </h5>
                                     <div class="d-flex align-items-center">
                                         <small class="text-muted me-3">{{ entry.timestamp.strftime('%d.%m.%Y %H:%M') if entry.timestamp else '' }}</small>
+                                        <a href="{{ url_for('main.edit_entry', id=entry.id) }}" class="btn btn-sm me-1" title="{{ _('Düzenle') }}"
+                                            style="background: transparent; border: none; text-decoration: none; transition: transform 0.2s;"
+                                            onmouseover="this.style.transform='scale(1.2)'"
+                                            onmouseout="this.style.transform='scale(1)'">
+                                            <span style="font-size: 1.2rem;">✏️</span>
+                                        </a>
                                         <form method="POST" action="{{ url_for('main.delete_entry', id=entry.id) }}"
                                             class="m-0"
                                             onsubmit="return confirm('{{ _('Bu kaydı silmek istediğinden emin misin?') }}');">
