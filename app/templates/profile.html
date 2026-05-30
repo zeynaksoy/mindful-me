@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mindful-Me | {{ _('Profilim') }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -338,7 +338,29 @@
 
     </div><!-- /container -->
 
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Bottom Navbar (Mobile Only) -->
+    <nav class="bottom-navbar d-flex d-lg-none">
+        <a href="{{ url_for('main.index') }}">
+            <span class="icon">🏠</span>
+            <span>{{ _('Ana Sayfa') }}</span>
+        </a>
+        <a href="{{ url_for('main.index') }}#entries-section">
+            <span class="icon">📖</span>
+            <span>{{ _('Günlük') }}</span>
+        </a>
+        <a href="{{ url_for('main.profile') }}" class="active">
+            <span class="icon">📊</span>
+            <span>{{ _('İstatistikler') }}</span>
+        </a>
+        <a href="mailto:support@mindful.me">
+            <span class="icon">❤️</span>
+            <span>{{ _('Destek') }}</span>
+        </a>
+    </nav>
+
     <script>
         function previewAvatar(event) {
             const file = event.target.files[0];

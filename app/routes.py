@@ -598,6 +598,17 @@ def delete_entry(id):
     db.session.commit()
     return redirect(url_for('main.index'))
 
+# ── Hızlı Kayıt ──────────────────────────────────────────────
+@main.route('/quick_entry', methods=['POST'])
+def quick_entry():
+    mood = request.form.get('mood')
+    if mood:
+        entry = MoodEntry(mood=mood, text=_('Hızlı giriş yapıldı.'), user_id=1)
+        db.session.add(entry)
+        db.session.commit()
+        flash(_('Hızlı kayıt başarıyla eklendi!'), 'success')
+    return redirect(url_for('main.index'))
+
 # ── API v1 ────────────────────────────────────────────────
 @main.route('/api/v1/entries', methods=['GET'])
 def api_entries():

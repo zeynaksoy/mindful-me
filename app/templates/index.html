@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mindful-Me | {{ _('Zihinsel Farkındalık') }}</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -111,6 +111,66 @@
         body.private-mode-active .private-text:hover {
             filter: blur(0px);
         }
+
+        @media (max-width: 768px) {
+            .glass-card {
+                width: 95% !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                padding: 1.5rem !important;
+            }
+            body {
+                padding-bottom: 140px;
+            }
+            .bottom-navbar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(15px);
+                -webkit-backdrop-filter: blur(15px);
+                border-top: 1px solid rgba(255, 255, 255, 0.5);
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+                display: flex;
+                justify-content: space-around;
+                padding: 10px 0;
+                z-index: 1000;
+            }
+            .bottom-navbar a {
+                text-align: center;
+                color: #6c757d;
+                text-decoration: none;
+                font-size: 0.75rem;
+                font-weight: 600;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                transition: all 0.3s;
+            }
+            .bottom-navbar a.active {
+                color: #6a11cb;
+            }
+            .bottom-navbar a .icon {
+                font-size: 1.4rem;
+                margin-bottom: 2px;
+            }
+            .quick-entry-panel {
+                position: fixed;
+                bottom: 60px;
+                left: 0;
+                width: 100%;
+                background: rgba(255,255,255,0.95);
+                backdrop-filter: blur(10px);
+                border-top: 1px solid rgba(0,0,0,0.1);
+                padding: 12px;
+                z-index: 999;
+                display: flex;
+                justify-content: center;
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            }
+        }
     </style>
 </head>
 
@@ -172,7 +232,7 @@
         </div>
         {% endif %}
 
-        <div class="row">
+        <div class="row flex-column-reverse flex-lg-row">
             <!-- Sol Sütun: Form ve Grafik -->
             <div class="col-lg-5">
                 <div class="glass-card">
@@ -857,6 +917,40 @@
         });
         {% endif %}
     </script>
+
+    <!-- Quick Entry Panel (Mobile Only) -->
+    <div class="quick-entry-panel d-flex d-lg-none">
+        <form action="{{ url_for('main.quick_entry') }}" method="POST" class="d-flex w-100 align-items-center justify-content-between px-2 m-0" id="quickEntryForm">
+            {{ form.hidden_tag() }}
+            <span class="fw-bold" style="color: #6a11cb; font-size: 0.9rem;">{{ _('Hızlı Ekle:') }}</span>
+            <div class="d-flex gap-2">
+                <button type="submit" name="mood" value="mutlu" class="btn btn-sm btn-outline-success rounded-circle d-flex align-items-center justify-content-center" style="width:40px; height:40px; font-size: 1.2rem;">😄</button>
+                <button type="submit" name="mood" value="sakin" class="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center" style="width:40px; height:40px; font-size: 1.2rem;">😌</button>
+                <button type="submit" name="mood" value="stresli" class="btn btn-sm btn-outline-warning rounded-circle d-flex align-items-center justify-content-center" style="width:40px; height:40px; font-size: 1.2rem;">😰</button>
+                <button type="submit" name="mood" value="uzgun" class="btn btn-sm btn-outline-danger rounded-circle d-flex align-items-center justify-content-center" style="width:40px; height:40px; font-size: 1.2rem;">😢</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bottom Navbar (Mobile Only) -->
+    <nav class="bottom-navbar d-flex d-lg-none">
+        <a href="{{ url_for('main.index') }}" class="active">
+            <span class="icon">🏠</span>
+            <span>{{ _('Ana Sayfa') }}</span>
+        </a>
+        <a href="{{ url_for('main.index') }}#entries-section">
+            <span class="icon">📖</span>
+            <span>{{ _('Günlük') }}</span>
+        </a>
+        <a href="{{ url_for('main.profile') }}">
+            <span class="icon">📊</span>
+            <span>{{ _('İstatistikler') }}</span>
+        </a>
+        <a href="mailto:support@mindful.me">
+            <span class="icon">❤️</span>
+            <span>{{ _('Destek') }}</span>
+        </a>
+    </nav>
 </body>
 
 </html>
