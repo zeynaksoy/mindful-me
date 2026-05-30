@@ -609,6 +609,18 @@ def quick_entry():
         flash(_('Hızlı kayıt başarıyla eklendi!'), 'success')
     return redirect(url_for('main.index'))
 
+@main.route('/journal')
+def journal():
+    return redirect(url_for('main.index', _anchor='entries-section'))
+
+@main.route('/stats')
+def stats():
+    return redirect(url_for('main.profile'))
+
+@main.route('/support')
+def support():
+    return render_template('support.html')
+
 # ── API v1 ────────────────────────────────────────────────
 @main.route('/api/v1/entries', methods=['GET'])
 def api_entries():

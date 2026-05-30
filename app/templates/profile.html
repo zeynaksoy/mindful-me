@@ -347,15 +347,15 @@
             <span class="icon">🏠</span>
             <span>{{ _('Ana Sayfa') }}</span>
         </a>
-        <a href="{{ url_for('main.index') }}#entries-section">
+        <a href="{{ url_for('main.journal') }}">
             <span class="icon">📖</span>
             <span>{{ _('Günlük') }}</span>
         </a>
-        <a href="{{ url_for('main.profile') }}" class="active">
+        <a href="{{ url_for('main.stats') }}" class="active">
             <span class="icon">📊</span>
             <span>{{ _('İstatistikler') }}</span>
         </a>
-        <a href="mailto:support@mindful.me">
+        <a href="{{ url_for('main.support') }}">
             <span class="icon">❤️</span>
             <span>{{ _('Destek') }}</span>
         </a>
